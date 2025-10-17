@@ -25,8 +25,10 @@ library(tidyverse)
 
 ```{r load-data}
 # load your data 
-
-
+AArea <- read_csv("data/HDA_CouncilArea.csv")
+ABoard <- read_csv("data/HDA_HealthBoard.csv")
+MArea <- read_csv("data/HDM_CouncilArea.csv")
+MBoard <- read_csv("data/HDM_HealthBoard.csv")
 
 
 ```
