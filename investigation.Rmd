@@ -1,6 +1,6 @@
 ---
 title: "IDS investigation worksheet"
-author: "by Team-Name: User1, User2, User3, User4 & User5"
+author: "by Team-Name: Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -29,8 +29,53 @@ AArea <- read_csv("data/HDA_CouncilArea.csv")
 ABoard <- read_csv("data/HDA_HealthBoard.csv")
 MArea <- read_csv("data/HDM_CouncilArea.csv")
 MBoard <- read_csv("data/HDM_HealthBoard.csv")
+CouncilArea <- read_csv("data/CouncilArea.csv")
 
 
 ```
 
+
+```{r}
+#Question - How does the crude rate for heart diseases compare between regions in Scotland?
+
+Regions <- CouncilArea %>%
+  mutate(
+    Region = case_when(
+      CA == c("S12000033", "S12000034", "S12000020", "S12000017") ~ "North",
+      CA %in% c("S12000038", "S12000039", "S12000015") ~ "North East",
+      CA %in% c("S12000005", "S12000014", "S12000026", "S12000036", "S12000042", "S12000044") ~ "Central",
+      CA %in% c("S12000006", "S12000010", "S12000019", "S12000028", "S12000045") ~ "South",
+      CA %in% c("S12000008", "S12000009", "S12000011", "S12000018", "S12000021", "S12000023", "S12000027", "S12000030", "S12000035", "S12000040", "S12000041") ~ "West",
+    )
+  )
+
+
+CA_joined <- left_join(MArea, Regions %>% select(CA, Region), by = "CA")
+
+
+CA_summary <- CA_joined %>%
+  group_by(Region) %>%
+  summarise(
+    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
+    mean_rate  = mean(CrudeRate, na.rm = TRUE)
+  )
+
+
+  ggplot(CA_summary, aes(x = Region, y = mean_rate)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Crude Mortality Rate by Council Area",
+    x = "Council Area",
+    y = "Mean Crude Mortality Rate (%)"
+  )
+
+HBR_summary <- MBoard %>%
+  group_by(HBR) %>%
+  summarise(
+    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
+    mean_rate  = mean(CrudeRate, na.rm = TRUE)
+  )
+
+
+```
 
