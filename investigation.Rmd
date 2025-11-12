@@ -41,7 +41,7 @@ CouncilArea <- read_csv("data/CouncilArea.csv")
 Regions <- CouncilArea %>%
   mutate(
     Region = case_when(
-      CA == c("S12000033", "S12000034", "S12000020", "S12000017") ~ "North",
+      CA %in% c("S12000033", "S12000034", "S12000020", "S12000017") ~ "North",
       CA %in% c("S12000038", "S12000039", "S12000015") ~ "North East",
       CA %in% c("S12000005", "S12000014", "S12000026", "S12000036", "S12000042", "S12000044") ~ "Central",
       CA %in% c("S12000006", "S12000010", "S12000019", "S12000028", "S12000045") ~ "South",
