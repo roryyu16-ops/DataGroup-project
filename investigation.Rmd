@@ -37,7 +37,7 @@ CouncilArea <- read_csv("data/CouncilArea.csv")
 
 ```{r}
 #Question - How does the crude rate for heart diseases compare between regions in Scotland?
-
+#Chart of Area
 
 Regions <- CouncilArea %>%
   mutate(
@@ -74,8 +74,9 @@ CA_summary <- CA_joined %>%
 
 
 ```
-```{r}
 
+```{r}
+# Chart of EASR
 heart_disease <- MArea %>% drop_na(CrudeRate)
 heart_disease <- heart_disease %>% drop_na(EASR)
 
@@ -87,3 +88,127 @@ ggplot(data = heart_disease,
   geom_smooth(method = lm , se = FALSE)
 
 ```
+
+```{r}
+Data<- MArea %>% drop_na(CrudeRate,Diagnosis)
+
+# Bar chart of Sex
+table_sex<-Data %>%
+  group_by(Sex) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+
+ggplot(table_sex)+
+       geom_bar(mapping= aes (x=Sex,
+                     y=mean_cruderate,
+                     fill=Sex),
+                     stat = "identity")+
+  labs(title = "The mean value of cruderate for different Sexs",
+       x="Sex",
+       y="Mean Cruderate",
+       fill="Sex")
+
+#Bar chart of gender
+table_age<-Data %>%
+  group_by(AgeGroup) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
+
+ggplot(table_age)+
+       geom_bar(mapping= aes (x=AgeGroup,
+                              y=mean_cruderate,
+                              fill=AgeGroup),
+                              stat = "identity")+
+  labs(title = "The mean value of cruderate for different AgeGroups",
+       x="Age",
+       y="Mean Cruderate",
+       fill="AgeGroup")
+
+
+
+
+
+
+
+###
+##Chart of two variables
+###
+
+#Table 3 (Agegroup and Diagnosis)
+Table_3<- Data %>%
+  group_by(AgeGroup,Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
+
+ggplot(Table_3, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  labs(
+    title = "Mean crude rate by heart-disease type and Agegroup",
+    x = "Heart-disease type",
+    y = "Mean crude rate",
+    fill = "AgeGroup"
+  )
+
+#Table 4 (Sex and Diagnosis)
+Table_4<-Data %>%
+  group_by(Sex,Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+ggplot(Table_4, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  labs(
+    title = "Mean crude rate by heart-disease type and sex",
+    x = "Heart-disease type",
+    y = "Mean crude rate",
+    fill = "Sex"
+  )
+
+#Table 5(Area and Diagnosis)
+CA_summary_with_year<- CA_joined %>%
+  group_by(Region,Year) %>%
+  summarise(
+    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
+    mean_rate  = mean(CrudeRate, na.rm = TRUE)
+  )
+
+ggplot(CA_summary_with_year, aes(x = Year, y =mean_rate,  fill = Region)) +
+  geom_col(position = position_dodge(width = 0.8))+
+  labs(
+    title = "Number of Deaths by Area over Years",
+    x = "Year",
+    y = "Number of Deaths"
+  ) 
+ 
+  
+#Graph of the Year
+  Table_6<-Data %>%
+  group_by(Sex,Year) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+  
+ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  labs(
+    title = "Number of Deaths by Sex over Years",
+    x = "Year",
+    y = "Mean crude rate",
+    fill = "Sex"
+  )
+
+  Table_7<-Data %>%
+    group_by(AgeGroup,Year) %>%
+    summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+              median_cruderate = median(CrudeRate , na.rm = TRUE)) 
+  ggplot(Table_7, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
+    geom_line(size = 1) +
+    geom_point() +
+    labs(
+      title = "Number of Deaths by AgeGroup over Years",
+      x = "Year",
+      y = "Number of Deaths"
+    ) +
+    theme_minimal()
+```
+
