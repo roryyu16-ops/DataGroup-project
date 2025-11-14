@@ -76,11 +76,6 @@ CA_summary <- CA_joined %>%
 ```
 ```{r}
 
-library(tidyverse)
-library(ggplot2)
-
-MArea <- read_csv("data/HDM_CouncilArea.csv")
-
 heart_disease <- MArea %>% drop_na(CrudeRate)
 heart_disease <- heart_disease %>% drop_na(EASR)
 
