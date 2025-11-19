@@ -34,7 +34,7 @@ CouncilArea <- read_csv("data/CouncilArea.csv")
 
 ```{r clean-data}
 Data<- MArea %>%
-  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR) %>%
+  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR,NumberOfDeaths) %>%
   drop_na()
 
 
@@ -44,7 +44,7 @@ Data<- MArea %>%
 #Question - How does the crude rate for heart diseases compare between regions in Scotland?
 #Chart of Area
 
-Regions <- CouncilArea %>%
+CA_Regions <- Data %>%
   mutate(
     Region = case_when(
       CA %in% c("S12000033", "S12000034", "S12000020", "S12000017") ~ "North",
@@ -57,13 +57,11 @@ Regions <- CouncilArea %>%
       )
   )
 
-CA_joined <- left_join(Data, Regions %>% select(CA, Region), by = "CA")
 
-
-CA_summary <- CA_joined %>%
+CA_summary <- CA_Regions %>%
   group_by(Region) %>%
   summarise(
-    mean_deaths = mean(NumberofDeaths, na.rm = TRUE),
+    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
     mean_rate  = mean(CrudeRate, na.rm = TRUE)
   )
 
@@ -73,7 +71,7 @@ CA_summary <- CA_joined %>%
   labs(
     title = "Crude Mortality Rate by Council Area",
     x = "Region",
-    y = "Mean Crude Mortality Rate (%)"
+    y = "Mean Crude Mortality Rate"
   )
 
 
