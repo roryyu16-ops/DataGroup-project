@@ -37,6 +37,7 @@ Data<- MArea %>%
   select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR) %>%
   drop_na()
 
+
 ```
 
 ```{r}
@@ -212,3 +213,20 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
     theme_minimal()
 ```
 
+```{r}
+ht_yc_fit <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(CrudeRate ~ Year+AgeGroup+Sex,data = Data)
+tidy(ht_yc_fit)
+
+ht_yc_fit_aug <- augment(ht_yc_fit$fit)
+ggplot(ht_yc_fit_aug, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
+  labs(x = "Predicted height", y = "Residuals")
+
+glance(ht_yc_fit)$adj.r.squared
+```
+```{r}
+
+```
