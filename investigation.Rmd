@@ -210,6 +210,9 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
   )
 
 #Agegroup and year
+
+
+
   Table_7<-Data %>%
     group_by(AgeGroup,Year) %>%
     summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
@@ -246,6 +249,7 @@ ggplot(summary_diagnosis,aes(x = Year, y = NumberofDeaths, color = Diagnosis, gr
 
 ```{r}
 
+  
 Data <- Data %>%
   mutate(
     split_AgeGroup = case_when(
@@ -264,18 +268,41 @@ Data$Diagnosis<-relevel(factor(Data$Diagnosis),ref="Heart Failure")
 Data$Sex<-relevel(factor(Data$Sex),ref="Females")
 
 
-ht_yc_fit <- linear_reg() %>%
+ht_yc_fit_1 <- linear_reg() %>%
   set_engine("lm") %>%
   fit(CrudeRate ~ Year+split_AgeGroup+Sex+Diagnosis,data = Data)
-tidy(ht_yc_fit)
+tidy(ht_yc_fit_1)
 
-ht_yc_fit_aug <- augment(ht_yc_fit$fit)
-ggplot(ht_yc_fit_aug, mapping = aes(x = .fitted, y = .resid)) +
+ht_yc_fit_aug_1 <- augment(ht_yc_fit_1$fit)
+ggplot(ht_yc_fit_aug_1, mapping = aes(x = .fitted, y = .resid)) +
   geom_point(alpha = 0.5) +
   geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
   labs(x = "Predicted CrudeRate", y = "Residuals")
 
-glance(ht_yc_fit)$adj.r.squared
+ht_yc_fit_2 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(CrudeRate ~ Year,data = Data)
+tidy(ht_yc_fit_2)
+
+ht_yc_fit_aug_2 <- augment(ht_yc_fit_2$fit)
+
+ggplot(data=ht_yc_fit_aug_2 ,aes(x=Year,y=CrudeRate))+
+  geom_point(alpha=0.25)+
+  geom_line(aes(x = Year, y = .fitted), linewidth = 0.75)+
+  geom_point(mapping = aes(x = Year,y = .fitted), color = "#E48957")+
+  geom_segment(mapping = aes(x = Year, y = CrudeRate,
+                             xend = Year, yend = .fitted), color = "#E48957", alpha = 0.4)+
+  labs(title = "Year vs CrudeRate",
+    x = "Year",
+    y = "Cruderate"
+  ) 
+
+
+glance(ht_yc_fit_1)$adj.r.squared
+glance(ht_yc_fit_2)$adj.r.squared
+
+
+
 ```
 
 ```
