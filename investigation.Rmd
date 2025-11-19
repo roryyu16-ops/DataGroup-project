@@ -56,13 +56,13 @@ Regions <- CouncilArea %>%
       )
   )
 
-CA_joined <- left_join(MArea, Regions %>% select(CA, Region), by = "CA")
+CA_joined <- left_join(Data, Regions %>% select(CA, Region), by = "CA")
 
 
 CA_summary <- CA_joined %>%
   group_by(Region) %>%
   summarise(
-    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
+    mean_deaths = mean(NumberofDeaths, na.rm = TRUE),
     mean_rate  = mean(CrudeRate, na.rm = TRUE)
   )
 
