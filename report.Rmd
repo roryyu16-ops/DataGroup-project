@@ -1,6 +1,6 @@
 ---
 title: "Project title"
-author: "by Team-Name: User1, User2, User3, User4 & User5"
+author: "by Artery Party: Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk"
 date: "`r Sys.Date()`"
 output: html_document
 ---
@@ -12,8 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load-lib, include = FALSE}
 library(tidyverse)
-# Add any other libraries here
-
+library(tidymodels)
 
 
 ```
@@ -23,6 +22,13 @@ library(tidyverse)
 # load your data here and any pre-processing/cleaning 
 #  that you need for your report.
 
+MArea <- read_csv("data/HDM_CouncilArea.csv")
+CouncilArea <- read_csv("data/CouncilArea.csv")
+
+
+Data<- MArea %>%
+  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR) %>%
+  drop_na()
 
 
 
@@ -32,6 +38,10 @@ library(tidyverse)
 ## Research Question
 
 Describe your research question here. Include why this question might be of interest. 
+--------------------------------------------------------------------------------------------------
+Our main research question is to explore the overall trends of heart disease mortality in Scotland, and to identify how mortality rates vary across different demographic categories, such as gender, geographical area, years.
+
+Our aim was to find any patterns or if there were more predominant groups of people which show higher mortality rates.
 
 
 
@@ -43,7 +53,19 @@ Briefly describe your dataset here - include a description of the key variables 
 Include a citation for your data. 
 See http://libraryguides.vu.edu.au/c.php?g=386501&p=4347840 for guidance on proper citation for datasets. 
 If you got your data off the web, make sure to state the retrieval date.
+--------------------------------------------------------------------------------------------------
+Data Overview
 
+We are using the 'Heart Disease Mortality by Council Area' dataset from the Scottish Heart Disease Statistics from the Public Health Scotland NHS website. 
+
+This dataset consists of 17820 rows and 14 variables (columns).
+
+To support our research aim, we made additional variables to categorise our data better and so we could analyse and evaluate the data more easily.
+  - 
+  - 
+
+
+To focus on our main indicators of categories, we mainly used the variables: CA (Council Area code), Sex, Year and AgeGroup.
 
 
 
@@ -68,11 +90,63 @@ You can also load your data here and present any analysis results / plots.
 Make sure to hide your code with  `echo = FALSE` unless the point you are trying to make is about the code itself, in which case you should show your code.
 
 
+---------------------------------------------------------------
+
+
+#Data Visualisations
+
+1. Geographical area
+
+To start off, we tried to find if there were differences in mortality rate for each region of Scotland.
+We looked at the dataset CouncilArea from CouncilArea.csv to match with the council area codes in MArea (the original dataset)
+
+
+2. EASR
+
+The EASR is the European Age-Sex standardised rate per 100,000 population. It is adjusted for the age distribution using a standard population (100,000) and provides a more valid and unbiased comparison than crude rate.
+
+
+We used the EASR and plotted it against crude rate to see how reliable and it was and we plotted a line of best fit, which had a gradient of 1. This shows that crude rate is very reliable and we can confidently use it to compare evaluate the data, as their correlation is near perfect.
+
+
+3. Sex 
+
+We 
+
+
+4. Sex and Age
+
+
+
+
+5. Year
+
+
+
+
+Predictive Modelling
+
+
+
+
+Model Evaluation
+
+
+
+
+
+
+Conclusion
+
+
+
 
 
 
 ## References
 
-List any references here. You should, at a minimum, list your data source.
+Public Health Scotland -- Scottish Heart Disease Statistics -- Heart Disease Mortality by Council Area (NHS)
+https://www.opendata.nhs.scot/dataset/scottish-heart-disease-statistics/resource/fc7b42f1-4de6-48dd-b640-613fb0aa427d
 
-
+Public Health Scotland -- Council Area 2011 - Council Area 2019 
+https://www.opendata.nhs.scot/dataset/geography-codes-and-labels/resource/967937c4-8d67-4f39-974f-fd58c4acfda5
