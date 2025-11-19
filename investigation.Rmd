@@ -16,7 +16,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r load-lib, message = FALSE}
 library(tidyverse)
-# Add any other libraries here
+library(tidymodels)
+
 
 
 
@@ -25,15 +26,18 @@ library(tidyverse)
 
 ```{r load-data}
 # load your data 
-AArea <- read_csv("data/HDA_CouncilArea.csv")
-ABoard <- read_csv("data/HDA_HealthBoard.csv")
 MArea <- read_csv("data/HDM_CouncilArea.csv")
-MBoard <- read_csv("data/HDM_HealthBoard.csv")
 CouncilArea <- read_csv("data/CouncilArea.csv")
 
 
 ```
 
+```{r clean-data}
+Data<- MArea %>%
+  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR) %>%
+  drop_na()
+
+```
 
 ```{r}
 #Question - How does the crude rate for heart diseases compare between regions in Scotland?
@@ -77,10 +81,8 @@ CA_summary <- CA_joined %>%
 
 ```{r}
 # Chart of EASR
-heart_disease <- MArea %>% drop_na(CrudeRate)
-heart_disease <- heart_disease %>% drop_na(EASR)
 
-ggplot(data = heart_disease,
+ggplot(data = Data,
        mapping = aes(x = EASR, 
                      y = CrudeRate, 
                      )) +
@@ -90,8 +92,6 @@ ggplot(data = heart_disease,
 ```
 
 ```{r}
-Data<- MArea %>% drop_na(CrudeRate,Diagnosis)
-
 # Bar chart of Sex
 table_sex<-Data %>%
   group_by(Sex) %>%
