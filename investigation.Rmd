@@ -124,8 +124,20 @@ ggplot(table_age)+
        y="Mean Cruderate",
        fill="AgeGroup")
 
+#line chart of year
+summary_diagnosis <- Data%>%
+  group_by(Year) %>%
+  summarise(NumberofDeaths = sum(NumberOfDeaths, na.rm = TRUE))
 
-
+ggplot(summary_diagnosis, aes(x = Year, y = NumberofDeaths)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(
+    title = "Number of Deaths over Years",
+    x = "Year",
+    y = "Number of Deaths"
+  ) +
+  theme_minimal()
 
 
 
@@ -182,6 +194,7 @@ ggplot(CA_summary_with_year, aes(x = Year, y =mean_rate,  fill = Region)) +
  
   
 #Graph of the Year
+#Sex and year
   Table_6<-Data %>%
   group_by(Sex,Year) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
@@ -196,6 +209,7 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
     fill = "Sex"
   )
 
+#Agegroup and year
   Table_7<-Data %>%
     group_by(AgeGroup,Year) %>%
     summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
@@ -209,7 +223,26 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
       y = "Number of Deaths"
     ) +
     theme_minimal()
+  
+  #Diagnosis and year
+  summary_diagnosis <- Data %>%
+  group_by(Year, Diagnosis) %>%
+  summarise(NumberofDeaths = sum(NumberOfDeaths, na.rm = TRUE))
+
+ggplot(summary_diagnosis,aes(x = Year, y = NumberofDeaths, color = Diagnosis, group = Diagnosis)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(
+    title = "Number of Deaths by Diagnosis over Years",
+    x = "Year",
+    y = "Number of Deaths"
+  ) +
+  theme_minimal()
+
 ```
+
+
+
 
 ```{r}
 
