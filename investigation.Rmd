@@ -165,7 +165,7 @@ ggplot(Table_4, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
   )
 
 #Table 5(Area and Diagnosis)
-CA_summary_with_year<- CA_joined %>%
+CA_summary_with_year<- CA_Regions %>%
   group_by(Region,Year) %>%
   summarise(
     mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
@@ -212,18 +212,39 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
 ```
 
 ```{r}
+
+Data <- Data %>%
+  mutate(
+    split_AgeGroup = case_when(
+      AgeGroup %in% c("75plus years") ~ "75plus years",
+      AgeGroup %in% c("0-44 years", "45-64 years", "65-74 years", "under75 years") ~ "under75 years",
+      TRUE ~ "Others"
+      )
+  )
+
+Data<-Data%>% 
+  filter(!Sex %in% c("All"))%>%
+  filter(!AgeGroup %in% c("All"))
+
+Data$split_AgeGroup<-relevel(factor(Data$split_AgeGroup),ref="under75 years")
+Data$Diagnosis<-relevel(factor(Data$Diagnosis),ref="Heart Failure")
+Data$Sex<-relevel(factor(Data$Sex),ref="Females")
+
+
 ht_yc_fit <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(CrudeRate ~ Year+AgeGroup+Sex,data = Data)
+  fit(CrudeRate ~ Year+split_AgeGroup+Sex+Diagnosis,data = Data)
 tidy(ht_yc_fit)
 
 ht_yc_fit_aug <- augment(ht_yc_fit$fit)
 ggplot(ht_yc_fit_aug, mapping = aes(x = .fitted, y = .resid)) +
   geom_point(alpha = 0.5) +
   geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
-  labs(x = "Predicted height", y = "Residuals")
+  labs(x = "Predicted CrudeRate", y = "Residuals")
 
 glance(ht_yc_fit)$adj.r.squared
+```
+
 ```
 ```{r}
 
