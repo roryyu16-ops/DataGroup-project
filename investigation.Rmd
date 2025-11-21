@@ -146,14 +146,14 @@ ggplot(summary_diagnosis, aes(x = Year, y = NumberofDeaths)) +
 ##Chart of two variables
 ###
 
-#Table 3 (Agegroup and Diagnosis)
-Table_3<- Data %>%
+#Table 4 (Agegroup and Diagnosis)
+Table_4<- Data %>%
   group_by(AgeGroup,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
   mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
 
-ggplot(Table_3, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
+ggplot(Table_4, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
   geom_col(position = position_dodge(width = 0.8)) +
   labs(
     title = "Mean crude rate by heart-disease type and Agegroup",
@@ -162,12 +162,12 @@ ggplot(Table_3, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
     fill = "AgeGroup"
   )
 
-#Table 4 (Sex and Diagnosis)
-Table_4<-Data %>%
+#Table 5 (Sex and Diagnosis)
+Table_5<-Data %>%
   group_by(Sex,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))
-ggplot(Table_4, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
+ggplot(Table_5, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
   geom_col(position = position_dodge(width = 0.8)) +
   labs(
     title = "Mean crude rate by heart-disease type and sex",
@@ -176,7 +176,7 @@ ggplot(Table_4, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
     fill = "Sex"
   )
 
-#Table 5(Area and Diagnosis)
+#Table 6(Area and Diagnosis)
 CA_summary_with_year<- CA_Regions %>%
   group_by(Region,Year) %>%
   summarise(
@@ -195,15 +195,15 @@ ggplot(CA_summary_with_year, aes(x = Year, y =mean_rate,  fill = Region)) +
   
 #Graph of the Year
 #Sex and year
-  Table_6<-Data %>%
+  Table_7<-Data %>%
   group_by(Sex,Year) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))
   
-ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
+ggplot(Table_7, aes(x = Year, y = mean_cruderate, fill = Sex)) +
   geom_col(position = position_dodge(width = 0.8)) +
   labs(
-    title = "Number of Deaths by Sex over Years",
+    title = "Mean crude rate by by Sex over Years",
     x = "Year",
     y = "Mean crude rate",
     fill = "Sex"
@@ -213,15 +213,15 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
 
 
 
-  Table_7<-Data %>%
+  Table_8<-Data %>%
     group_by(AgeGroup,Year) %>%
     summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
               median_cruderate = median(CrudeRate , na.rm = TRUE)) 
-  ggplot(Table_7, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
+  ggplot(Table_8, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
     geom_line(size = 1) +
     geom_point() +
     labs(
-      title = "Number of Deaths by AgeGroup over Years",
+      title = "Mean crude rate by AgeGroup over Years",
       x = "Year",
       y = "Number of Deaths"
     ) +
