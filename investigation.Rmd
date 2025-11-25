@@ -39,6 +39,7 @@ Data<- MArea %>%
   drop_na()
 
 
+
 ```
 
 ```{r}
@@ -92,8 +93,11 @@ ggplot(data = Data,
 ```
 
 ```{r}
+
+
 # Bar chart of Sex
-table_sex<-Data %>%
+table_sex<-Data %>% 
+  filter(!Sex %in% c("All"))%>%
   group_by(Sex) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))
@@ -110,6 +114,7 @@ ggplot(table_sex)+
 
 #Bar chart of AgeGroup
 table_age<-Data %>%
+  filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
@@ -164,6 +169,10 @@ ggplot(table_Diagnosis)+
 ###
 ##Chart of two variables
 ###
+
+Data<-Data%>% 
+  filter(!Sex %in% c("All"))%>%
+  filter(!AgeGroup %in% c("All"))
 
 #Table 1 (Agegroup and Diagnosis)
 table_1<- Data %>%
@@ -277,9 +286,6 @@ Data <- Data %>%
       )
   )
 
-Data<-Data%>% 
-  filter(!Sex %in% c("All"))%>%
-  filter(!AgeGroup %in% c("All"))
 
 Data$split_AgeGroup<-relevel(factor(Data$split_AgeGroup),ref="under75 years")
 Data$Diagnosis<-relevel(factor(Data$Diagnosis),ref="Heart Failure")
