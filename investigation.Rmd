@@ -53,7 +53,6 @@ CA_Regions <- Data %>%
       CA %in% c("S12000005", "S12000014", "S12000026", "S12000036", "S12000042", "S12000044","S12000048") ~ "Central",
       CA %in% c("S12000006", "S12000010", "S12000019", "S12000028", "S12000045") ~ "South",
       CA %in% c("S12000008", "S12000009", "S12000011", "S12000018", "S12000021", "S12000023", "S12000027", "S12000030", "S12000035", "S12000040", "S12000041","S12000013","S12000029","S12000049","S12000050") ~ "West",
-      CA %in% c("S92000003") ~ "Scotland",
       TRUE ~ "Others"
       )
   )
@@ -140,7 +139,25 @@ ggplot(summary_diagnosis, aes(x = Year, y = NumberofDeaths)) +
   ) +
   theme_minimal()
 
+# Bar chart of Diagnosis
+table_Diagnosis<-Data %>%
+  group_by(Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+
+ggplot(table_Diagnosis)+
+       geom_bar(mapping= aes (x=Diagnosis,
+                     y=mean_cruderate,
+                     fill=Diagnosis),
+                     stat = "identity")+
+  labs(title = "The mean value of cruderate for different Diagnosis",
+       x="Diagnosis",
+       y="Mean Cruderate",
+       fill="Diagnosis")
+
 ```
+
+
 
 ```{r}
 ###
@@ -306,7 +323,6 @@ ggplot(data=ht_yc_fit_aug_2 ,aes(x=Year,y=CrudeRate))+
 
 ```
 
-```
 ```{r}
 
 CA <- Data %>% 
