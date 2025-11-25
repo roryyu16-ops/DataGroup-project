@@ -1,7 +1,7 @@
 ---
-title: "Presentation title"
+title: "Heart Disease Mortality in the UK"
 subtitle: "Presentation subtitle (if any)"
-author: "Team name <br> Names of team members"
+author: "Artery Party <br> Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk"
 institute: "University of Edinburgh"
 date: "`r Sys.Date()`"
 output:
@@ -53,13 +53,71 @@ style_xaringan(
 
 class: center, middle
 
-## A statement of the overall goal / research question
+## To explore the overall trends of heart disease mortality in Scotland, and to identify how mortality rates vary across different categories.
 
 ---
 
 class: inverse, center, middle
 
-# Section title
+# Crude Mortality by Four Factors
+
+---
+
+class: inverse, center, middle
+
+# Year
+
+---
+
+# Year
+
+- 11111
+
+- 22222
+
+---
+
+class: inverse, middle, center
+
+# Gender
+
+---
+
+# Gender
+
+- 11111
+
+- 22222
+
+---
+
+class: inverse, middle, center
+
+# AgeGroup
+
+---
+
+
+# AgeGroup
+
+- 11111
+
+- 22222
+
+---
+
+class: inverse, middle, center
+
+# Diagnosis
+
+---
+
+
+# Diagnosis
+
+- 11111
+
+- 22222
 
 ---
 
@@ -69,11 +127,6 @@ class: inverse, center, middle
 
 - Make sure to commit and push all resulting files to your GitHub repo
 
----
-
-class: inverse, middle, center
-
-# Using xaringan
 
 ---
 
