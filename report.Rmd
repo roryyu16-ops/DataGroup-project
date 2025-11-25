@@ -35,12 +35,11 @@ Data<- MArea %>%
 
 ## Research Question
 
-Our main research question is to explore the overall trends of heart disease mortality in Scotland, and to identify how mortality rates vary across different demographic categories, such as gender, geographical area, years.
+Our main research question is to explore the overall trends of heart disease mortality in Scotland, and to identify how mortality rates vary across different demographic categories, such as gender, geographical area, age group, and year.
 
 Our aim was to find any long-term patterns or if there were more predominant groups of people which show higher mortality rates.
 
-This particular dataset interested our group as heart diseases can affect anyone and is also known as one of the main causes of death globally. We all have a risk of getting heart disease and it was interesting to us to find if it was the social or biologicakl factors that
-
+This particular dataset interested our group as heart diseases can affect anyone and is also known as one of the main causes of death globally. We all have a risk of getting heart disease and it was interesting to us to find what group of people are most at risk. 
 
 
 ## Data Overview
@@ -64,9 +63,6 @@ This allowed us to conduct our findings more easily and made the data look less 
 Additionally to support our research aim, we made additional variables to categorise our data better and so we could analyse and evaluate the data more easily. The additional variables will be mentioned in the findings.
 
 
-
-
-
 ## Findings
 
 Think of this as the text of your presentation with some extra detail to cover what there was not time to discuss in the presentation. This might include any assumptions you made when doing your analysis, any limitations of the work you have done or any ideas you have for future work. Feel free to split this section into subsections to make it easier to read. 
@@ -79,15 +75,9 @@ Make sure to hide your code with  `echo = FALSE` unless the point you are trying
 
 ## Data Visualisations
 
-### 1. Geographical area
+### 1. EASR
 
-To start off, we tried to find if there were differences in mortality rate for each region of Scotland.
-We looked at the dataset CouncilArea from CouncilArea.csv to match with the council area codes in MArea (the original dataset)
-
-
-### 2. EASR
-
-The EASR is the European Age-Sex standardised rate per 100,000 population. It is adjusted for the age distribution using a standard population (100,000) and provides a more valid and unbiased comparison than crude rate.
+Firstly, we compared the EASR and crude rate in this dataset. The EASR is the European Age-Sex standardised rate per 100,000 population. It is adjusted for the age distribution using a standard population (100,000) and provides a more valid and unbiased comparison than crude rate.
 
 ```{r,echo=FALSE}
 # Chart of EASR
@@ -100,8 +90,48 @@ ggplot(data = Data,
   geom_smooth(method = lm , se = FALSE)
 ```
 
+We used the EASR and plotted it against crude rate to see how reliable and it was and we plotted a line of best fit, which had a gradient of 1. This shows that crude rate is very reliable and we can confidently use it to compare evaluate the data, as their correlation is near perfect. Therefore we used the crude rate instead of EASR for the rest of the investigation.
 
-We used the EASR and plotted it against crude rate to see how reliable and it was and we plotted a line of best fit, which had a gradient of 1. This shows that crude rate is very reliable and we can confidently use it to compare evaluate the data, as their correlation is near perfect.
+
+### 2. Geographical area
+
+To start off, we tried to find if there were differences in mortality rate for each region of Scotland.
+We looked at the dataset CouncilArea from CouncilArea.csv and we manually matched each area with the council area codes in MArea (the original dataset) to each region (North, Central, South, etc.)
+
+```{r, echo = FALSE}
+#Chart of Area
+
+CA_Regions <- Data %>%
+  mutate(
+    Region = case_when(
+      CA %in% c("S12000033", "S12000034", "S12000020", "S12000017") ~ "North",
+      CA %in% c("S12000038", "S12000039", "S12000015") ~ "North East",
+      CA %in% c("S12000005", "S12000014", "S12000026", "S12000036", "S12000042", "S12000044") ~ "Central",
+      CA %in% c("S12000006", "S12000010", "S12000019", "S12000028", "S12000045") ~ "South",
+      CA %in% c("S12000008", "S12000009", "S12000011", "S12000018", "S12000021", "S12000023", "S12000027", "S12000030", "S12000035", "S12000040", "S12000041") ~ "West",
+      CA %in% c("S92000003") ~ "Scotland",
+      TRUE ~ "Others"
+      )
+  )
+
+CA_summary <- CA_Regions %>%
+  group_by(Region) %>%
+  summarise(
+    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
+    mean_rate  = mean(CrudeRate, na.rm = TRUE)
+  )
+
+
+  ggplot(CA_summary, aes(x = Region, y = mean_rate)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Crude Mortality Rate by Council Area",
+    x = "Region",
+    y = "Mean Crude Mortality Rate"
+  )
+```
+
+We found that there was not much variation across the regions, so the geographical location does not affect the crude rate for heart diseases. This could mean that the risk factors are quite similar throughout each region. So we decided to investigate the other factors in this dataset.
 
 
 ### 3. Sex 
@@ -120,7 +150,7 @@ ggplot(table_sex)+
                      y=mean_cruderate,
                      fill=Sex),
                      stat = "identity")+
-  labs(title = "The mean value of cruderate for different Sexs",
+  labs(title = "The mean value of cruderate for different Sexes",
        x="Sex",
        y="Mean Cruderate",
        fill="Sex")
@@ -129,6 +159,7 @@ ggplot(table_sex)+
 
 
 ### 4. Sex and Age
+
 ```{r}
 #Bar chart of sex
 table_age<-Data %>%
