@@ -79,7 +79,7 @@ Make sure to hide your code with  `echo = FALSE` unless the point you are trying
 
 Firstly, we compared the EASR and crude rate in this dataset. The EASR is the European Age-Sex standardised rate per 100,000 population. It is adjusted for the age distribution using a standard population (100,000) and provides a more valid and unbiased comparison than crude rate.
 
-```{r,echo=FALSE}
+```{r,echo=FALSE, message= FALSE}
 # Chart of EASR
 
 ggplot(data = Data,
@@ -98,7 +98,7 @@ We used the EASR and plotted it against crude rate to see how reliable and it wa
 To start off, we tried to find if there were differences in mortality rate for each region of Scotland.
 We looked at the dataset CouncilArea from CouncilArea.csv and we manually matched each area with the council area codes in MArea (the original dataset) to each region (North, Central, South, etc.)
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning= FALSE}
 #Chart of Area
 
 CA_Regions <- Data %>% 
@@ -132,14 +132,14 @@ CA_summary <- CA_Regions %>%
   )
 ```
 
-We found that there was not much variation across the regions, so the geographical location does not affect the crude rate for heart diseases, showing that this is not something we should keep looking into. This could mean that the risk factors are quite similar throughout each region. So we decided to investigate the other factors in this dataset.
+We found that there was not much variation across the regions, so the geographical location does not affect the crude rate for heart diseases, showing that this is not something we should keep looking into. This could mean that the risk factors such as oil intake or physical activity are quite similar throughout each region. So we decided to investigate the other factors in this dataset.
 
 
 ### 3. Sex 
 
-Then, to visualise the how the crude rate differs between sex, we made a bar chart with the mean value of crude rates across all females and males.
+Then, to visualise the how the crude rate differs between sex, we made a bar chart with the mean value of crude rates across all females and males. 
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, warning= FALSE}
 # Bar chart of Sex
 table_sex<-Data %>%
   group_by(Sex) %>%
@@ -157,12 +157,15 @@ ggplot(table_sex)+
        fill="Sex")
 ```
 
-We found that males 
+We found that males have a significantly higher mean crude rate than females, almost double. This shows that males are more twice as likely to die from heart diseases than females. This may be caused by eating habits, physical activity, or even biological reasons. We figured this was worth looking into.
 
-### 4. Sex and Age
 
-```{r, echo = FALSE}
-#Bar chart of sex
+### 4. Age
+
+We then investigated the different age groups differed in crude rate. 
+
+```{r, echo = FALSE, warning= FALSE}
+#Bar chart of Age
 table_age<-Data %>%
   group_by(AgeGroup) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
@@ -178,17 +181,58 @@ ggplot(table_age)+
        x="Age",
        y="Mean Cruderate",
        fill="AgeGroup")
-
 ```
 
 
 
 ### 5. Year
 
+We then compared mean crude rate with year, visualising it with a line chart. 
 
+```{r, echo = FALSE, warning= FALSE}
+#line chart of year
+summary_diagnosis <- Data%>%
+  group_by(Year) %>%
+   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
-```{r, echo = FALSE}
-#Graph of the Year
+ggplot(summary_diagnosis, aes(x = Year, y = mean_cruderate)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(
+    title = "The mean value of cruderate over Years",
+    x = "Year",
+    y = "Mean Cruderate"
+  ) +
+  theme_minimal()
+```
+
+We found that the mean crude rate falls throughout the years until 2019, where it increases at a faster rate. This tells us that
+
+### 6. Diagnosis
+
+``` {r, echo = FALSE, warning= FALSE}
+# Bar chart of Diagnosis
+table_Diagnosis<-Data %>%
+  group_by(Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+
+ggplot(table_Diagnosis)+
+       geom_bar(mapping= aes (x=Diagnosis,
+                     y=mean_cruderate,
+                     fill=Diagnosis),
+                     stat = "identity")+
+  labs(title = "The mean value of cruderate for different Diagnosis",
+       x="Diagnosis",
+       y="Mean Cruderate",
+       fill="Diagnosis")
+
+```
+
+### 7. Combining variables 
+
+```{r, echo = FALSE, message= FALSE}
+#Graph of the Year and Sex
   Table_6<-Data %>%
   group_by(Sex,Year) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
@@ -202,12 +246,19 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
     y = "Mean crude rate",
     fill = "Sex"
   )
+```
 
-  Table_7<-Data %>%
+
+
+We then plotted year against crude rate
+
+```{r, echo = FALSE, message= FALSE}
+#Graph of Year and Age
+Table_7<-Data %>%
     group_by(AgeGroup,Year) %>%
     summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
               median_cruderate = median(CrudeRate , na.rm = TRUE)) 
-  ggplot(Table_7, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
+  ggplot(Table_7, aes(x = Year, y = mean_cruderate, color = AgeGroup , group = AgeGroup)) +
     geom_line(size = 1) +
     geom_point() +
     labs(
@@ -220,9 +271,9 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
 
 
 
-##Summary 
+### Summary 
 
-Going through all these visualisations, we concluded that males aged over 75 are most likely to suffer from heart disease
+Going through all these visualisations, we concluded that males aged over 75 are most likely to suffer from heart disease and that year
 
 ## Predictive Modelling
 
