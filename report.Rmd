@@ -252,7 +252,6 @@ Clear classification of disease severity:
 
 Coronary heart disease: The mean and median values are close (116.0 vs 112.0), indicating a relatively symmetrical data distribution, stable risk, and generally high risk.
 Heart failure: The mean (2.32) is much higher than the median (0), indicating that the vast majority of cases have no events, but there are a small number of individuals with extremely high risk.
-
 Clinical priority ranking:
 Coronary heart disease>heart attack>heart failure, which conforms to the common sense of disease mortality rate, but it is necessary to be alert to outliers in heart failure.
 
