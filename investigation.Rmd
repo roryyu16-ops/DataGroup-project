@@ -111,7 +111,11 @@ ggplot(data = Data,
                      y = CrudeRate, 
                      )) +
   geom_point(size = 1)+
-  geom_smooth(method = lm , se = FALSE)
+  geom_smooth(method = lm , se = FALSE)+
+  labs(title = "EASR with CrudeRate",
+       x="EASR",
+       y=" CrudeRate",
+       fill="Sex")
 
 ```
 
