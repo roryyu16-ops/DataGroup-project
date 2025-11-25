@@ -17,7 +17,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r load-lib, message = FALSE}
 library(tidyverse)
 library(tidymodels)
-
+library(knitr)
+library(dplyr)
 
 
 
@@ -27,7 +28,7 @@ library(tidymodels)
 ```{r load-data}
 # load your data 
 MArea <- read_csv("data/HDM_CouncilArea.csv")
-CouncilArea <- read_csv("data/CouncilArea.csv")
+# CouncilArea <- read_csv("data/CouncilArea.csv")
 
 
 ```
@@ -308,4 +309,50 @@ ggplot(data=ht_yc_fit_aug_2 ,aes(x=Year,y=CrudeRate))+
 ```
 ```{r}
 
+CA <- Data %>% 
+  filter(!is.na(CrudeRate))%>%
+  mutate(rate = CrudeRate / 1000) %>% 
+  mutate(rate_group = if_else(rate <= median(rate, na.rm = TRUE), 0, 1)) %>% 
+  mutate(rate_group = factor(rate_group))
+
+set.seed(888)
+Deaths_split <- initial_split(CA, prop = 0.80)
+
+train_data <- training(Deaths_split)
+test_data  <- testing(Deaths_split)
+
+Deaths_fit <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(rate_group ~ Year + AgeGroup + Sex + Diagnosis,
+      data = train_data,
+      fimily = "binomial")
+
+Deaths_pred <- predict(Deaths_fit, test_data, type = "prob") %>%
+  bind_cols(test_data)
+
+Deaths_pred %>%
+  roc_curve(
+    truth = rate_group,
+    .pred_1,
+    event_level = "second"
+  ) %>%
+  autoplot()
+
+
+Deaths_pred %>%
+  roc_auc(
+    truth = rate_group,
+    .pred_1,
+    event_level = "second"
+  )
+
+cutoff_prob <- 0.5
+Deaths_pred %>%
+  mutate(
+    rate_group      = if_else(rate_group == 1, "deaths", "alive"),
+    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled deaths", "labelled alive")
+  ) %>%
+  count(rate_group_pred, rate_group) %>%
+  pivot_wider(names_from = rate_group, values_from = n) %>%
+  kable(col.names = c(" ", "alive", "deaths"))
 ```
