@@ -11,7 +11,7 @@
 
 <meta name="author" content="by Artery Party: Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk" />
 
-<meta name="date" content="2025-11-25" />
+<meta name="date" content="2025-11-26" />
 
 <title>IDS investigation worksheet</title>
 
@@ -353,7 +353,7 @@ display: none;
 <h1 class="title toc-ignore">IDS investigation worksheet</h1>
 <h4 class="author">by Artery Party: Roderick Yu, Yufei Xiang, Hoddy Zhu,
 Lincoln Luk</h4>
-<h4 class="date">2025-11-25</h4>
+<h4 class="date">2025-11-26</h4>
 
 </div>
 
@@ -383,6 +383,39 @@ MArea &lt;- read_csv(&quot;data/HDM_CouncilArea.csv&quot;)</code></pre>
 <pre class="r"><code>Data&lt;- MArea %&gt;%
   select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR,NumberOfDeaths) %&gt;%
   drop_na()</code></pre>
+<pre class="r"><code>Data %&gt;%
+  group_by(AgeGroup) %&gt;%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE)) </code></pre>
+<pre><code>## # A tibble: 6 × 3
+##   AgeGroup      mean_cruderate median_cruderate
+##   &lt;chr&gt;                  &lt;dbl&gt;            &lt;dbl&gt;
+## 1 0-44 years            0.0728              0  
+## 2 45-64 years           3.59                0  
+## 3 65-74 years          18.1                 0  
+## 4 75plus years        314.                 63.0
+## 5 All                  72.8                72.3
+## 6 under75 years         4.15                0</code></pre>
+<pre class="r"><code>Data %&gt;%
+  group_by(Sex) %&gt;%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+              median_cruderate = median(CrudeRate , na.rm = TRUE)) </code></pre>
+<pre><code>## # A tibble: 3 × 3
+##   Sex     mean_cruderate median_cruderate
+##   &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;
+## 1 All               43.0             1.95
+## 2 Females           27.8             0   
+## 3 Males             47.9             0</code></pre>
+<pre class="r"><code>Data %&gt;%  
+  group_by(Diagnosis) %&gt;%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+              median_cruderate = median(CrudeRate , na.rm = TRUE)) </code></pre>
+<pre><code>## # A tibble: 3 × 3
+##   Diagnosis              mean_cruderate median_cruderate
+##   &lt;chr&gt;                           &lt;dbl&gt;            &lt;dbl&gt;
+## 1 Coronary Heart Disease         116.              112. 
+## 2 Heart Attack                    57.4              57.3
+## 3 Heart Failure                    2.32              0</code></pre>
 <pre class="r"><code>#Question - How does the crude rate for heart diseases compare between regions in Scotland?
 #Chart of Area
 

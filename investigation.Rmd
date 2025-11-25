@@ -43,6 +43,29 @@ Data<- MArea %>%
 ```
 
 ```{r}
+
+Data %>%
+  group_by(AgeGroup) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE)) 
+
+Data %>%
+  group_by(Sex) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+              median_cruderate = median(CrudeRate , na.rm = TRUE)) 
+
+Data %>%  
+  group_by(Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+              median_cruderate = median(CrudeRate , na.rm = TRUE)) 
+```
+
+
+
+
+
+
+```{r}
 #Question - How does the crude rate for heart diseases compare between regions in Scotland?
 #Chart of Area
 
