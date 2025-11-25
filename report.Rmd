@@ -220,6 +220,23 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
 
 
 ## Predictive Modelling
+Key findings:
+Extreme age dependence:
+The average CrudeRate (314.0) of the population aged 75 and above is tens to hundreds of times higher than other age groups, with a median of 63.0, indicating a significant concentration of risk in this group.
+The median of the population under 75 years old is 0, but the average is 4.15, indicating that a few high-value individuals have raised the mean and the overall distribution is highly skewed to the right.
+Full data conceals the truth:
+The mean and median of "all ages" are close (72.8 vs 72.3), but after splitting, it can be seen that the age stratification effect is extremely strong, and directly using global statistics will ignore high-risk elderly groups.
+Suggestion: Public health resources should prioritize the population aged 75 and above, and further analyze high-value outliers for the<75 age group.
+
+Significant gender differences:
+The average CrudeRate of males (47.9) is 72% higher than that of females (27.8), but the median for both is 0, indicating that most individuals have no events, but males have more extreme high-risk cases.
+The global median (1.95) falls between males and females, indicating that the dataset may contain mixed gender ratios.
+
+Clear classification of disease severity:
+Coronary heart disease: The mean and median values are close (116.0 vs 112.0), indicating a relatively symmetrical data distribution, stable risk, and generally high risk.
+Heart failure: The mean (2.32) is much higher than the median (0), indicating that the vast majority of cases have no events, but there are a small number of individuals with extremely high risk.
+Clinical priority ranking:
+Coronary heart disease>heart attack>heart failure, which conforms to the common sense of disease mortality rate, but it is necessary to be alert to outliers in heart failure.
 
 
 
@@ -231,7 +248,6 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
 
 
 ## Conclusion
-
 
 
 
