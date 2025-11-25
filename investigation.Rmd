@@ -108,7 +108,7 @@ ggplot(table_sex)+
        y="Mean Cruderate",
        fill="Sex")
 
-#Bar chart of gender
+#Bar chart of AgeGroup
 table_age<-Data %>%
   group_by(AgeGroup) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
@@ -128,15 +128,15 @@ ggplot(table_age)+
 #line chart of year
 summary_diagnosis <- Data%>%
   group_by(Year) %>%
-  summarise(NumberofDeaths = sum(NumberOfDeaths, na.rm = TRUE))
+   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
-ggplot(summary_diagnosis, aes(x = Year, y = NumberofDeaths)) +
+ggplot(summary_diagnosis, aes(x = Year, y = mean_cruderate)) +
   geom_line(size = 1) +
   geom_point() +
   labs(
-    title = "Number of Deaths over Years",
+    title = "The mean value of cruderate over Years",
     x = "Year",
-    y = "Number of Deaths"
+    y = "Mean Cruderate"
   ) +
   theme_minimal()
 
@@ -199,16 +199,15 @@ ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
 CA_summary_with_year<- CA_Regions %>%
   group_by(Region,Year) %>%
   summarise(
-    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
-    mean_rate  = mean(CrudeRate, na.rm = TRUE)
+    mean_cruderate = mean(CrudeRate , na.rm = TRUE)
   )
 
-ggplot(CA_summary_with_year, aes(x = Year, y =mean_rate,  fill = Region)) +
+ggplot(CA_summary_with_year, aes(x = Year, y =mean_cruderate,  fill = Region)) +
   geom_col(position = position_dodge(width = 0.8))+
   labs(
-    title = "Number of Deaths by Area over Years",
+    title = "Mean crude rate by Area over Years",
     x = "Year",
-    y = "Number of Deaths"
+    y = "Mean crude rate"
   ) 
  
   
@@ -242,22 +241,22 @@ ggplot(Table_4, aes(x = Year, y = mean_cruderate, fill = Sex)) +
     labs(
       title = "Mean crude rate by AgeGroup over Years",
       x = "Year",
-      y = "Number of Deaths"
+      y = "Mean crude rate"
     ) +
     theme_minimal()
   
   #Table6(Diagnosis and year)
   summary_diagnosis <- Data %>%
   group_by(Year, Diagnosis) %>%
-  summarise(NumberofDeaths = sum(NumberOfDeaths, na.rm = TRUE))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
-ggplot(summary_diagnosis,aes(x = Year, y = NumberofDeaths, color = Diagnosis, group = Diagnosis)) +
+ggplot(summary_diagnosis,aes(x = Year, y = mean_cruderate, color = Diagnosis, group = Diagnosis)) +
   geom_line(size = 1) +
   geom_point() +
   labs(
-    title = "Number of Deaths by Diagnosis over Years",
+    title = "Mean crude rate by Diagnosis over Years",
     x = "Year",
-    y = "Number of Deaths"
+    y = "Mean crude rate"
   ) +
   theme_minimal()
 
