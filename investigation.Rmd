@@ -28,7 +28,7 @@ library(dplyr)
 ```{r load-data}
 # load your data 
 MArea <- read_csv("data/HDM_CouncilArea.csv")
-# CouncilArea <- read_csv("data/CouncilArea.csv")
+
 
 
 ```
@@ -45,7 +45,8 @@ Data<- MArea %>%
 #Question - How does the crude rate for heart diseases compare between regions in Scotland?
 #Chart of Area
 
-CA_Regions <- Data %>%
+CA_Regions <- Data %>% 
+  filter(!CA %in% c("S92000003")) %>%
   mutate(
     Region = case_when(
       CA %in% c("S12000033", "S12000034", "S12000020", "S12000017") ~ "North",
@@ -365,10 +366,10 @@ Deaths_pred %>%
 cutoff_prob <- 0.5
 Deaths_pred %>%
   mutate(
-    rate_group      = if_else(rate_group == 1, "deaths", "alive"),
-    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled deaths", "labelled alive")
+    rate_group      = if_else(rate_group == 1, "high_risk", "low_risk"),
+    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high_risk", "labelled low_risk")
   ) %>%
   count(rate_group_pred, rate_group) %>%
   pivot_wider(names_from = rate_group, values_from = n) %>%
-  kable(col.names = c(" ", "alive", "deaths"))
+  kable(col.names = c(" ", "low_risk", "high_risk"))
 ```
