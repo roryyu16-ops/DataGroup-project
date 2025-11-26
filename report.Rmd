@@ -368,8 +368,36 @@ Going through all these visualisations and the exploratory statistics, we conclu
 After removing all observations labeled as “ALL” in the Sex and AgeGroup variables, the dataset contains 3068 valid records.
 
 We excluded these categories because they represent aggregated totals and could distort the accuracy of the model by mixing population groups with very different characteristics.
+```{r}
+Data<-Data%>% 
+  filter(!Sex %in% c("All"))%>%
+  filter(!AgeGroup %in% c("All"))
+```
+Grouping
+
+```{r}
+Data <- Data %>%
+  mutate(
+    split_AgeGroup = case_when(
+      AgeGroup %in% c("75plus years") ~ "75plus years",
+      AgeGroup %in% c("0-44 years", "45-64 years", "65-74 years", "under75 years") ~ "under75 years",
+      TRUE ~ "Others"
+      )
+  )
+
+
+Data$split_AgeGroup<-relevel(factor(Data$split_AgeGroup),ref="under75 years")
+Data$Diagnosis<-relevel(factor(Data$Diagnosis),ref="Heart Failure")
+Data$Sex<-relevel(factor(Data$Sex),ref="Females")
+```
 
 ### Coefficient Interpretation
+```{r}
+ht_yc_fit_1 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(CrudeRate ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+tidy(ht_yc_fit_1)
+```
 
 ##### Year:
 The coefficient for Year is extremely small, indicating that time has minimal or no linear effect on crude mortality rate. This aligns with the visual scatter plot showing stable mortality levels across the years.
@@ -389,6 +417,17 @@ These diagnosis types are therefore also major contributors to increased mortali
 Year < Is Male < Is Heart Attack < Is Coronary Heart Disease < Is Age 75+
 
 ### Residual Plot Analysis
+```{r}
+
+ht_yc_fit_aug_1 <- augment(ht_yc_fit_1$fit)
+ggplot(ht_yc_fit_aug_1, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
+  labs(x = "Predicted CrudeRate", y = "Residuals")
+
+
+```
+
 
 The residual plot shows several important patterns:
 
@@ -409,12 +448,30 @@ Possible reasons include:
     - Even after trying log(CrudeRate + 1), the distribution did not improve
 
 This suggests that the linearity assumption may not fully hold.
+```{r results = "hide"}
+ht_yc_fit_2 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(log(CrudeRate+1) ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+tidy(ht_yc_fit_2)
+```
+
+
+```{r results = "hide"}
+ht_yc_fit_aug_2 <- augment(ht_yc_fit_2$fit)
+ggplot(ht_yc_fit_aug_2, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
+  labs(x = "Predicted CrudeRate", y = "Residuals")
+```
 
 ### Adjusted R²
 
 The adjusted R² value of this model indicates that:
 The linear regression model does not fit the data very well.
 It explains only a modest proportion of the variation in crude mortality rate.
+```{r}
+glance(ht_yc_fit_1)$adj.r.squared
+```
 
 ### Scatter Plot: CrudeRate vs Year
 
@@ -426,6 +483,29 @@ The scatter plot shows:
 - Mortality rates remain stable across years
 
 These patterns confirm that Year is not a meaningful predictor in this dataset.
+```{r results = "hide"}
+ht_yc_fit_3 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(CrudeRate ~ Year,data = Data)
+tidy(ht_yc_fit_3)
+```
+
+
+```{r}
+ht_yc_fit_aug_3 <- augment(ht_yc_fit_3$fit)
+
+ggplot(data=ht_yc_fit_aug_3 ,aes(x=Year,y=CrudeRate))+
+  geom_point(alpha=0.25)+
+  geom_line(aes(x = Year, y = .fitted), linewidth = 0.75)+
+  geom_point(mapping = aes(x = Year,y = .fitted), color = "#E48957")+
+  geom_segment(mapping = aes(x = Year, y = CrudeRate,
+                             xend = Year, yend = .fitted), color = "#E48957", alpha = 0.4)+
+  labs(title = "Year vs CrudeRate",
+    x = "Year",
+    y = "Cruderate"
+  ) 
+
+```
 
 ### Conclusion
 
