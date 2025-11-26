@@ -526,7 +526,12 @@ Although the linear regression model has limitations, it successfully identifies
 
 
 ## logistic regression model
-```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
+
+We have developed a binary classification model (high-risk and low-risk) aimed at risk prediction in a Scottish population.
+
+Method: The median population mortality rate was used as the cutoff—individuals above the median were labeled high-risk, and those below were labeled low-risk. Eighty percent of the data were used for training and 20 % for testing.
+
+```{r}
 CA <- Data %>% 
   mutate(rate = CrudeRate / 1000) %>% 
   mutate(rate_group = if_else(rate <= median(rate, na.rm = TRUE), 0, 1)) %>% 
@@ -547,15 +552,51 @@ CrudeRate_fit <- logistic_reg() %>%
 CrudeRate_pred <- predict(CrudeRate_fit, test_data, type = "prob") %>%
   bind_cols(test_data)
 
-CrudeRate_pred %>%
+AUC_ROC <- CrudeRate_pred %>%
   roc_curve(
     truth = rate_group,
     .pred_1,
     event_level = "second"
+  )
+  
+AUC_ROC %>% autoplot()
+```
+
+From the ROC curve we can draw the following conclusions:
+· The point near the bottom-left corner shows both sensitivity and (1 – specificity) close to 0, indicating that very few low-mortality individuals are misclassified as high-risk. However, this also means that only a small proportion of true high-mortality individuals are correctly identified; in other words, the model frequently misclassifies high-mortality people as low-risk.
+· The steep early rise from the bottom-left corner demonstrates strong discriminatory power: even small differences in predictor values allow the model to capture many additional high-risk cases without simultaneously flagging large numbers of low-risk subjects.
+· Overall, the curve bows toward the upper-left corner, suggesting that the model performs well.
+
+
+```{r}
+best_cutoff <- AUC_ROC %>%
+  mutate(J = sensitivity + specificity - 1) %>%
+  filter(J == max(J)) %>%
+  select(.threshold, sensitivity, specificity, J)
+
+best_cutoff
+```
+We calculated the Youden Index as sensitivity + specificity – 1 and selected the cutoff that maximizes this index. At this optimal cutoff the model achieves:
+· Sensitivity = 0.72
+· Specificity = 0.8551237
+These are the best attainable values given the data.
+
+
+```{r}
+cutoff_prob <- best_cutoff$.threshold
+CrudeRate_pred %>%
+  mutate(
+    rate_group      = if_else(rate_group == 1 , "high_CrudeRate", "low_CrudeRate"),
+    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high-CrudeRate", "labelled low-CrudeRate")
   ) %>%
-  autoplot()
+  count(rate_group_pred, rate_group) %>%
+  pivot_wider(names_from = rate_group, values_from = n) %>%
+  kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
+```
+Among the high-mortality group, 33 were correctly predicted and 17 were misclassified; in the low-mortality group, 513 were correctly predicted and 53 were misclassified. This demonstrates that the model is more accurate for low-mortality individuals, with only a 10 % chance of error.
 
 
+```{r}
 CrudeRate_pred %>%
   roc_auc(
     truth = rate_group,
@@ -563,11 +604,9 @@ CrudeRate_pred %>%
     event_level = "second"
   )
 ```
+The area under the ROC curve (AUC) is 0.842. A higher AUC indicates better performance, so this value confirms that the model is of good quality.
 
-
-
-
-
+Overall, age, gender, and disease are sufficient to screen out high-risk individuals, making it a very good model.
 
 
 
