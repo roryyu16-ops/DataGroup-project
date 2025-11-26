@@ -405,6 +405,8 @@ best_cutoff <- AUC_ROC %>%
   filter(J == max(J)) %>%
   select(.threshold, sensitivity, specificity, J)
 
+best_cutoff
+
 
 CrudeRate_pred %>%
   roc_auc(
@@ -412,8 +414,6 @@ CrudeRate_pred %>%
     .pred_1,
     event_level = "second"
   )
-
-best_cutoff
 
 cutoff_prob <- best_cutoff$.threshold
 CrudeRate_pred %>%

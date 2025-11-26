@@ -369,9 +369,11 @@ project.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre><code>## Warning: package &#39;purrr&#39; was built under R version 4.5.2</code></pre>
 <pre><code>## Warning: package &#39;dplyr&#39; was built under R version 4.5.2</code></pre>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 4.5.2</code></pre>
 <pre class="r"><code>library(tidymodels)</code></pre>
 <pre><code>## Warning: package &#39;tidymodels&#39; was built under R version 4.5.2</code></pre>
 <pre><code>## Warning: package &#39;dials&#39; was built under R version 4.5.2</code></pre>
+<pre><code>## Warning: package &#39;scales&#39; was built under R version 4.5.2</code></pre>
 <pre><code>## Warning: package &#39;infer&#39; was built under R version 4.5.2</code></pre>
 <pre><code>## Warning: package &#39;modeldata&#39; was built under R version 4.5.2</code></pre>
 <pre><code>## Warning: package &#39;parsnip&#39; was built under R version 4.5.2</code></pre>
@@ -784,8 +786,12 @@ AUC_ROC %&gt;% autoplot()</code></pre>
   filter(J == max(J)) %&gt;%
   select(.threshold, sensitivity, specificity, J)
 
-
-CrudeRate_pred %&gt;%
+best_cutoff</code></pre>
+<pre><code>## # A tibble: 1 × 4
+##   .threshold sensitivity specificity     J
+##        &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
+## 1     0.0850        0.72       0.855 0.575</code></pre>
+<pre class="r"><code>CrudeRate_pred %&gt;%
   roc_auc(
     truth = rate_group,
     .pred_1,
@@ -795,11 +801,6 @@ CrudeRate_pred %&gt;%
 ##   .metric .estimator .estimate
 ##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
 ## 1 roc_auc binary         0.842</code></pre>
-<pre class="r"><code>best_cutoff</code></pre>
-<pre><code>## # A tibble: 1 × 4
-##   .threshold sensitivity specificity     J
-##        &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;
-## 1     0.0850        0.72       0.855 0.575</code></pre>
 <pre class="r"><code>cutoff_prob &lt;- best_cutoff$.threshold
 CrudeRate_pred %&gt;%
   mutate(
