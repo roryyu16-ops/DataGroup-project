@@ -1,5 +1,5 @@
 ---
-title: "Heart Disease Mortality in the UK"
+title: "Heart Disease Mortality in the Scotland"
 subtitle: "Presentation subtitle (if any)"
 author: "Artery Party <br> Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk"
 institute: "University of Edinburgh"
@@ -39,17 +39,42 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 ```
 
 ```{r load-data, include=FALSE}
-# Load your data here
+# load your data 
+MArea <- read_csv("data/HDM_CouncilArea.csv")
+Data<- MArea %>%
+  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR,NumberOfDeaths) %>%
+  drop_na()
 
 ```
+
+
 
 ```{r include=FALSE}
 
 #Background image
 style_xaringan(
-  title_slide_background_image = "img/confetti.jpg"
+  title_slide_background_image = "img/heartimages.jpg"
 )
 ```
+
+class: inverse, center, middle
+
+# Introduction
+
+---
+
+#Introducion
+
+
+
+---
+
+
+class: inverse, center, middle
+
+# Topic
+
+---
 
 class: center, middle
 
@@ -59,65 +84,498 @@ class: center, middle
 
 class: inverse, center, middle
 
-# Crude Mortality by Four Factors
+# How do we clean the data?
+
+---
+# How do we clean the data?
+
+--
+- 111
+
+--
+- 222
 
 ---
 
 class: inverse, center, middle
 
-# Year
+# Data Overview
 
 ---
 
-# Year
+# Data Overview
 
-- 11111
+--
+- Year – year of recorded data
 
-- 22222
+- CA – council area code
+
+- AgeGroup – categorical age group
+
+- Sex – male or female
+
+- Diagnosis – specific heart-disease-related diagnosis
+
+- CrudeRate – raw mortality rate
+
+- EASR – European Age-Standardised Rate, allowing better comparisons across groups
 
 ---
 
-class: inverse, middle, center
+class: inverse, center, middle
+
+# Data
+
+---
+
+# Data Overview
+
+---
+
+<style>
+.pull-left {
+  float: left;
+  width: 15%;
+  margin-left: 35%;
+}
+
+.pull-right {
+  float: right;
+  width: 15%;
+  margin-right: 35%;
+}
+</style>
+
+---
+
+class: inverse, center, middle
+
+# Crude Mortality by Six Factors
+
+.pull-left[
+- Region  
+- EASR  
+- Year  
+]
+
+.pull-right[
+<p style="margin: 0; padding: 0; text-align: left;">
+- Gender
+- Age Group
+- Diagnosis
+]
+
+---
+
+# Regions
+
+--
+```{r echo = FALSE}
+CA_Regions <- Data %>% 
+  filter(!CA %in% c("S92000003")) %>%
+  mutate(
+    Region = case_when(
+      CA %in% c("S12000033", "S12000034", "S12000020", "S12000017") ~ "North",
+      CA %in% c("S12000038", "S12000039", "S12000015","S12000047") ~ "North East",
+      CA %in% c("S12000005", "S12000014", "S12000026", "S12000036", "S12000042", "S12000044","S12000048") ~ "Central",
+      CA %in% c("S12000006", "S12000010", "S12000019", "S12000028", "S12000045") ~ "South",
+      CA %in% c("S12000008", "S12000009", "S12000011", "S12000018", "S12000021", "S12000023", "S12000027", "S12000030", "S12000035", "S12000040", "S12000041","S12000013","S12000029","S12000049","S12000050") ~ "West",
+      TRUE ~ "Others"
+      )
+  )
+
+
+CA_summary <- CA_Regions %>%
+  group_by(Region) %>%
+  summarise(
+    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
+    mean_rate  = mean(CrudeRate, na.rm = TRUE)
+  )
+```
+
+```{r out.width= "75%", fig.align="center", echo = FALSE}
+  ggplot(CA_summary, aes(x = Region, y = mean_rate)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Crude Mortality Rate by Council Area",
+    x = "Region",
+    y = "Mean Crude Mortality Rate"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+  )
+```
+
+---
+
+# EASR
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, warning=FALSE, message=FALSE}
+
+ggplot(data = Data,
+       mapping = aes(x = EASR, 
+                     y = CrudeRate, 
+                     )) +
+  geom_point(size = 1)+
+  geom_smooth(method = lm , se = FALSE)+
+  labs(title = "EASR with CrudeRate",
+       x="EASR",
+       y=" CrudeRate",
+       fill="Sex") +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+  )
+
+```
+
+---
+# Year
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, warning=FALSE}
+#line chart of year
+summary_diagnosis <- Data%>%
+  group_by(Year) %>%
+   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
+
+ggplot(summary_diagnosis, aes(x = Year, y = mean_cruderate)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(
+    title = "The mean value of cruderate over Years",
+    x = "Year",
+    y = "Mean Cruderate"
+  )  +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+  )
+```
+
+
+---
 
 # Gender
 
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE}
+# Bar chart of Sex
+table_sex<-Data %>%
+  group_by(Sex) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+
+ggplot(table_sex)+
+       geom_bar(mapping= aes (x=Sex,
+                     y=mean_cruderate,
+                     fill=Sex),
+                     stat = "identity")+
+  labs(title = "The mean value of cruderate for different Sexs",
+       x="Sex",
+       y="Mean Cruderate",
+       fill="Sex") +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+  )
+```
+
+
 ---
 
-# Gender
+# Age Group
 
-- 11111
+--
+```{r out.width= "75%", fig.align="center",fig.width=7, echo = FALSE}
+#Bar chart of Age Group
+table_age<-Data %>%
+  group_by(AgeGroup) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
 
-- 2222
+ggplot(table_age)+
+       geom_bar(mapping= aes (x=AgeGroup,
+                              y=mean_cruderate,
+                              fill=AgeGroup),
+                              stat = "identity")+
+  labs(title = "The mean value of cruderate for different Age Groups",
+       x="Age",
+       y="Mean Cruderate",
+       fill="AgeGroup") +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+  )
+```
+
 
 ---
-
-class: inverse, middle, center
-
-# AgeGroup
-
----
-
-
-# AgeGroup
-
-- 11111
-
-- 22222
-
----
-
-class: inverse, middle, center
 
 # Diagnosis
 
+--
+```{r out.width= "75%", fig.align="center",fig.width=7, echo = FALSE}
+# Bar chart of Diagnosis
+table_Diagnosis<-Data %>%
+  group_by(Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+
+ggplot(table_Diagnosis)+
+       geom_bar(mapping= aes (x=Diagnosis,
+                     y=mean_cruderate,
+                     fill=Diagnosis),
+                     stat = "identity")+
+  labs(title = "The mean value of cruderate for different Diagnosis",
+       x="Diagnosis",
+       y="Mean Cruderate",
+       fill="Diagnosis") +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+  )
+```
+
+
+---
+
+class: inverse, center, middle
+
+# Crude Mortality by Chart of two variables
+
+---
+# Agegroup and year
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
+  Table_5<-Data %>%
+    group_by(AgeGroup,Year) %>%
+    summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+              median_cruderate = median(CrudeRate , na.rm = TRUE)) 
+  ggplot(Table_5, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
+    geom_line(size = 1) +
+    geom_point() +
+    labs(
+      title = "Mean crude rate by AgeGroup over Years",
+      x = "Year",
+      y = "Mean crude rate"
+    ) +
+    theme_minimal()
+```
+
+
+---
+# Diagnosis and year
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
+  summary_diagnosis <- Data %>%
+  group_by(Year, Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
+
+ggplot(summary_diagnosis,aes(x = Year, y = mean_cruderate, color = Diagnosis, group = Diagnosis)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(
+    title = "Mean crude rate by Diagnosis over Years",
+    x = "Year",
+    y = "Mean crude rate"
+  ) +
+  theme_minimal()
+```
+
+
+---
+# Agegroup and Diagnosis
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE, warning=FALSE}
+table_1<- Data %>%
+  group_by(AgeGroup,Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
+
+ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  labs(
+    title = "Mean crude rate by heart-disease type and Agegroup",
+    x = "Heart-disease type",
+    y = "Mean crude rate",
+    fill = "AgeGroup"
+  )
+```
+
+---
+
+# Sex and Diagnosis
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
+Table_2<-Data %>%
+  group_by(Sex,Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  labs(
+    title = "Mean crude rate by heart-disease type and sex",
+    x = "Heart-disease type",
+    y = "Mean crude rate",
+    fill = "Sex"
+  )
+```
+
 ---
 
 
-# Diagnosis
+class: inverse, center, middle
 
-- 11111
+# Analysis of the two models
 
-- 22222
+---
+
+class: inverse, center, middle
+
+# linear regression models
+
+---
+
+# linear regression models
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE, message=FALSE}
+Data<-Data%>% 
+  filter(!Sex %in% c("All"))%>%
+  filter(!AgeGroup %in% c("All"))
+  
+Data <- Data %>%
+  mutate(
+    split_AgeGroup = case_when(
+      AgeGroup %in% c("75plus years") ~ "75plus years",
+      AgeGroup %in% c("0-44 years", "45-64 years", "65-74 years", "under75 years") ~ "under75 years",
+      TRUE ~ "Others"
+      )
+  )
+
+
+Data$split_AgeGroup<-relevel(factor(Data$split_AgeGroup),ref="under75 years")
+Data$Diagnosis<-relevel(factor(Data$Diagnosis),ref="Heart Failure")
+Data$Sex<-relevel(factor(Data$Sex),ref="Females")
+
+
+ht_yc_fit_1 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(log(CrudeRate+1) ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+tidy(ht_yc_fit_1)
+
+ht_yc_fit_aug_1 <- augment(ht_yc_fit_1$fit)
+ggplot(ht_yc_fit_aug_1, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
+  labs(x = "Predicted CrudeRate", y = "Residuals")
+
+glance(ht_yc_fit_1)$adj.r.squared
+
+ht_yc_fit_3 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(CrudeRate ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+tidy(ht_yc_fit_3)
+
+ht_yc_fit_aug_3 <- augment(ht_yc_fit_3$fit)
+ggplot(ht_yc_fit_aug_3, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
+  labs(x = "Predicted CrudeRate", y = "Residuals")
+
+glance(ht_yc_fit_3)$adj.r.squared
+
+
+ht_yc_fit_2 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(CrudeRate ~ Year,data = Data)
+tidy(ht_yc_fit_2)
+
+ht_yc_fit_aug_2 <- augment(ht_yc_fit_2$fit)
+
+ggplot(data=ht_yc_fit_aug_2 ,aes(x=Year,y=CrudeRate))+
+  geom_point(alpha=0.25)+
+  geom_line(aes(x = Year, y = .fitted), linewidth = 0.75)+
+  geom_point(mapping = aes(x = Year,y = .fitted), color = "#E48957")+
+  geom_segment(mapping = aes(x = Year, y = CrudeRate,
+                             xend = Year, yend = .fitted), color = "#E48957", alpha = 0.4)+
+  labs(title = "Year vs CrudeRate",
+    x = "Year",
+    y = "Cruderate"
+  ) 
+
+```
+
+
+---
+
+class: inverse, center, middle
+
+# Logistic regression models
+
+---
+
+# Logistic regression models
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
+CA <- Data %>% 
+  mutate(rate = CrudeRate / 1000) %>% 
+  mutate(rate_group = if_else(rate <= median(rate, na.rm = TRUE), 0, 1)) %>% 
+  mutate(rate_group = factor(rate_group))
+
+set.seed(888)
+CrudeRate_split <- initial_split(CA, prop = 0.80)
+
+train_data <- training(CrudeRate_split)
+test_data  <- testing(CrudeRate_split)
+
+CrudeRate_fit <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(rate_group ~ AgeGroup + Sex + Diagnosis,
+      data = train_data,
+      fimily = "binomial")
+
+CrudeRate_pred <- predict(CrudeRate_fit, test_data, type = "prob") %>%
+  bind_cols(test_data)
+
+CrudeRate_pred %>%
+  roc_curve(
+    truth = rate_group,
+    .pred_1,
+    event_level = "second"
+  ) %>%
+  autoplot()
+
+
+CrudeRate_pred %>%
+  roc_auc(
+    truth = rate_group,
+    .pred_1,
+    event_level = "second"
+  )
+
+```
+
+
+---
+#Sensitivity and specificity
+
+--
+```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
+cutoff_prob <- 0.25
+CrudeRate_pred %>%
+  mutate(
+    rate_group      = if_else(rate_group == 1 , "high_CrudeRate", "low_CrudeRate"),
+    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high-CrudeRate", "labelled low-CrudeRate")
+  ) %>%
+  count(rate_group_pred, rate_group) %>%
+  pivot_wider(names_from = rate_group, values_from = n) %>%
+  kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
+```
 
 ---
 
@@ -188,7 +646,7 @@ iris_modified <- iris %>%
 # Play around with height and width until you're happy with the look
 ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
   geom_point() + 
-  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.html
+  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.htmlc
 ```
 
 ---

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="" xml:lang="">
   <head>
-    <title>Heart Disease Mortality in the UK</title>
+    <title>Heart Disease Mortality in the Scotland</title>
     <meta charset="utf-8" />
     <meta name="author" content="Artery Party   Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk" />
-    <meta name="date" content="2025-11-25" />
-    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
+    <meta name="date" content="2025-11-26" />
+    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -13,7 +13,7 @@
 class: center, middle, inverse, title-slide
 
 .title[
-# Heart Disease Mortality in the UK
+# Heart Disease Mortality in the Scotland
 ]
 .subtitle[
 ## Presentation subtitle (if any)
@@ -25,7 +25,7 @@ class: center, middle, inverse, title-slide
 ### University of Edinburgh
 ]
 .date[
-### 2025-11-25
+### 2025-11-26
 ]
 
 ---
@@ -42,6 +42,27 @@ class: center, middle, inverse, title-slide
 
 
 
+
+
+class: inverse, center, middle
+
+# Introduction
+
+---
+
+#Introducion
+
+
+
+---
+
+
+class: inverse, center, middle
+
+# Topic
+
+---
+
 class: center, middle
 
 ## To explore the overall trends of heart disease mortality in Scotland, and to identify how mortality rates vary across different categories.
@@ -50,65 +71,263 @@ class: center, middle
 
 class: inverse, center, middle
 
-# Crude Mortality by Four Factors
+# How do we clean the data?
+
+---
+# How do we clean the data?
+
+--
+- 111
+
+--
+- 222
 
 ---
 
 class: inverse, center, middle
 
-# Year
+# Data Overview
 
 ---
 
-# Year
+# Data Overview
 
-- 11111
+--
+- Year – year of recorded data
 
-- 22222
+- CA – council area code
+
+- AgeGroup – categorical age group
+
+- Sex – male or female
+
+- Diagnosis – specific heart-disease-related diagnosis
+
+- CrudeRate – raw mortality rate
+
+- EASR – European Age-Standardised Rate, allowing better comparisons across groups
 
 ---
 
-class: inverse, middle, center
+class: inverse, center, middle
+
+# Data
+
+---
+
+# Data Overview
+
+---
+
+&lt;style&gt;
+.pull-left {
+  float: left;
+  width: 15%;
+  margin-left: 35%;
+}
+
+.pull-right {
+  float: right;
+  width: 15%;
+  margin-right: 35%;
+}
+&lt;/style&gt;
+
+---
+
+class: inverse, center, middle
+
+# Crude Mortality by Six Factors
+
+.pull-left[
+- Region  
+- EASR  
+- Year  
+]
+
+.pull-right[
+&lt;p style="margin: 0; padding: 0; text-align: left;"&gt;
+- Gender
+- Age Group
+- Diagnosis
+]
+
+---
+
+# Regions
+
+--
+
+
+&lt;img src="presentation_files/figure-html/unnamed-chunk-3-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# EASR
+
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-4-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+# Year
+
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-5-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+---
 
 # Gender
 
----
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-6-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
-# Gender
-
-- 11111
-
-- 2222
 
 ---
 
-class: inverse, middle, center
+# Age Group
 
-# AgeGroup
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-7-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
----
-
-
-# AgeGroup
-
-- 11111
-
-- 22222
 
 ---
-
-class: inverse, middle, center
 
 # Diagnosis
 
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-8-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+class: inverse, center, middle
+
+# Crude Mortality by Chart of two variables
+
+---
+# Agegroup and year
+
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-9-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Diagnosis and year
+
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-10-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Agegroup and Diagnosis
+
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-11-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Sex and Diagnosis
+
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-12-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
 ---
 
 
-# Diagnosis
+class: inverse, center, middle
 
-- 11111
+# Analysis of the two models
 
-- 22222
+---
+
+class: inverse, center, middle
+
+# linear regression models
+
+---
+
+# linear regression models
+
+--
+
+```
+## # A tibble: 6 × 5
+##   term                            estimate std.error statistic   p.value
+##   &lt;chr&gt;                              &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)                     -3.28     12.4        -0.264 7.91e-  1
+## 2 Year                             0.00157   0.00614     0.256 7.98e-  1
+## 3 split_AgeGroup75plus years       2.71      0.0910     29.8   6.49e-172
+## 4 SexMales                         0.143     0.0352      4.07  4.86e-  5
+## 5 DiagnosisCoronary Heart Disease  1.01      0.0531     19.0   2.84e- 76
+## 6 DiagnosisHeart Attack            0.620     0.0460     13.5   2.97e- 40
+```
+
+&lt;img src="presentation_files/figure-html/unnamed-chunk-13-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+```
+## [1] 0.3114551
+```
+
+```
+## # A tibble: 6 × 5
+##   term                            estimate std.error statistic   p.value
+##   &lt;chr&gt;                              &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1 (Intercept)                      293.     1008.        0.290 7.71e-  1
+## 2 Year                              -0.152     0.500    -0.304 7.61e-  1
+## 3 split_AgeGroup75plus years       269.        7.40     36.3   1.26e-240
+## 4 SexMales                          10.1       2.86      3.52  4.37e-  4
+## 5 DiagnosisCoronary Heart Disease   66.1       4.31     15.3   3.82e- 51
+## 6 DiagnosisHeart Attack             28.6       3.74      7.65  2.58e- 14
+```
+
+&lt;img src="presentation_files/figure-html/unnamed-chunk-13-2.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+```
+## [1] 0.3448354
+```
+
+```
+## # A tibble: 2 × 5
+##   term        estimate std.error statistic p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+## 1 (Intercept) -37.3     1245.      -0.0300   0.976
+## 2 Year          0.0257     0.617    0.0416   0.967
+```
+
+&lt;img src="presentation_files/figure-html/unnamed-chunk-13-3.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+class: inverse, center, middle
+
+# Logistic regression models
+
+---
+
+# Logistic regression models
+
+--
+&lt;img src="presentation_files/figure-html/unnamed-chunk-14-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+```
+## # A tibble: 1 × 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.842
+```
+
+
+---
+#Sensitivity and specificity
+
+--
+
+|                        | high_CrudeRate| low_CrudeRate|
+|:-----------------------|--------------:|-------------:|
+|labelled high-CrudeRate |             30|            32|
+|labelled low-CrudeRate  |             20|           534|
 
 ---
 
@@ -199,7 +418,7 @@ glance(model)
 - goes here
 ]
 .pull-right[
-&lt;img src="presentation_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-16-1.png" width="100%" /&gt;
 ]
 
 ---
