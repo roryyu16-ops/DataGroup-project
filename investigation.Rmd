@@ -35,7 +35,7 @@ MArea <- read_csv("data/HDM_CouncilArea.csv")
 
 ```{r clean-data}
 Data<- MArea %>%
-  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR,NumberOfDeaths) %>%
+  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR) %>%
   drop_na()
 
 
@@ -86,7 +86,6 @@ CA_Regions <- Data %>%
 CA_summary <- CA_Regions %>%
   group_by(Region) %>%
   summarise(
-    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
     mean_rate  = mean(CrudeRate, na.rm = TRUE)
   )
 
@@ -359,7 +358,6 @@ ggplot(data=ht_yc_fit_aug_2 ,aes(x=Year,y=CrudeRate))+
 ```{r}
 
 CA <- Data %>% 
-  filter(!is.na(CrudeRate))%>%
   mutate(rate = CrudeRate / 1000) %>% 
   mutate(rate_group = if_else(rate <= median(rate, na.rm = TRUE), 0, 1)) %>% 
   mutate(rate_group = factor(rate_group))
@@ -406,5 +404,16 @@ CrudeRate_pred %>%
   kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
 ```
 ```{r}
+roc_df <- CrudeRate_pred %>%
+  roc_curve(
+    truth = rate_group,
+    .pred_1,
+    event_level = "second"
+  )
+best_cutoff <- roc_df %>%
+  mutate(J = sensitivity + specificity - 1) %>%
+  filter(J == max(J)) %>%
+  select(.threshold, sensitivity, specificity, J)
 
+best_cutoff
 ```
