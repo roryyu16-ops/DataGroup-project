@@ -406,17 +406,6 @@ CrudeRate_pred %>%
     event_level = "second"
   )
 
-cutoff_prob <- 0.25
-CrudeRate_pred %>%
-  mutate(
-    rate_group      = if_else(rate_group == 1 , "high_CrudeRate", "low_CrudeRate"),
-    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high-CrudeRate", "labelled low-CrudeRate")
-  ) %>%
-  count(rate_group_pred, rate_group) %>%
-  pivot_wider(names_from = rate_group, values_from = n) %>%
-  kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
-```
-```{r}
 roc_df <- CrudeRate_pred %>%
   roc_curve(
     truth = rate_group,
@@ -429,4 +418,14 @@ best_cutoff <- roc_df %>%
   select(.threshold, sensitivity, specificity, J)
 
 best_cutoff
+
+cutoff_prob <- best_cutoff$.threshold
+CrudeRate_pred %>%
+  mutate(
+    rate_group      = if_else(rate_group == 1 , "high_CrudeRate", "low_CrudeRate"),
+    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high-CrudeRate", "labelled low-CrudeRate")
+  ) %>%
+  count(rate_group_pred, rate_group) %>%
+  pivot_wider(names_from = rate_group, values_from = n) %>%
+  kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
 ```
