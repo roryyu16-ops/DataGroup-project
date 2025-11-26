@@ -39,7 +39,6 @@ Data<- MArea %>%
   drop_na()
 
 
-
 ```
 
 ```{r}
@@ -196,9 +195,7 @@ ggplot(table_Diagnosis)+
 ##Chart of two variables
 ###
 
-Data<-Data%>% 
-  filter(!Sex %in% c("All"))%>%
-  filter(!AgeGroup %in% c("All"))
+
 
 #Table 1 (Agegroup and Diagnosis)
 table_1<- Data %>%
@@ -301,7 +298,9 @@ ggplot(summary_diagnosis,aes(x = Year, y = mean_cruderate, color = Diagnosis, gr
 
 
 ```{r}
-
+Data<-Data%>% 
+  filter(!Sex %in% c("All"))%>%
+  filter(!AgeGroup %in% c("All"))
   
 Data <- Data %>%
   mutate(
