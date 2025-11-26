@@ -317,10 +317,22 @@ Data$split_AgeGroup<-relevel(factor(Data$split_AgeGroup),ref="under75 years")
 Data$Diagnosis<-relevel(factor(Data$Diagnosis),ref="Heart Failure")
 Data$Sex<-relevel(factor(Data$Sex),ref="Females")
 
+ht_yc_fit_2 <- linear_reg() %>%
+  set_engine("lm") %>%
+  fit(log(CrudeRate+1) ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+tidy(ht_yc_fit_2)
+
+ht_yc_fit_aug_2 <- augment(ht_yc_fit_2$fit)
+ggplot(ht_yc_fit_aug_2, mapping = aes(x = .fitted, y = .resid)) +
+  geom_point(alpha = 0.5) +
+  geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
+  labs(x = "Predicted CrudeRate", y = "Residuals")
+
+glance(ht_yc_fit_2)$adj.r.squared
 
 ht_yc_fit_1 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(log(CrudeRate+1) ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+  fit(CrudeRate ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
 tidy(ht_yc_fit_1)
 
 ht_yc_fit_aug_1 <- augment(ht_yc_fit_1$fit)
@@ -331,28 +343,15 @@ ggplot(ht_yc_fit_aug_1, mapping = aes(x = .fitted, y = .resid)) +
 
 glance(ht_yc_fit_1)$adj.r.squared
 
+
 ht_yc_fit_3 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(CrudeRate ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+  fit(CrudeRate ~ Year,data = Data)
 tidy(ht_yc_fit_3)
 
 ht_yc_fit_aug_3 <- augment(ht_yc_fit_3$fit)
-ggplot(ht_yc_fit_aug_3, mapping = aes(x = .fitted, y = .resid)) +
-  geom_point(alpha = 0.5) +
-  geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
-  labs(x = "Predicted CrudeRate", y = "Residuals")
 
-glance(ht_yc_fit_3)$adj.r.squared
-
-
-ht_yc_fit_2 <- linear_reg() %>%
-  set_engine("lm") %>%
-  fit(CrudeRate ~ Year,data = Data)
-tidy(ht_yc_fit_2)
-
-ht_yc_fit_aug_2 <- augment(ht_yc_fit_2$fit)
-
-ggplot(data=ht_yc_fit_aug_2 ,aes(x=Year,y=CrudeRate))+
+ggplot(data=ht_yc_fit_aug_3 ,aes(x=Year,y=CrudeRate))+
   geom_point(alpha=0.25)+
   geom_line(aes(x = Year, y = .fitted), linewidth = 0.75)+
   geom_point(mapping = aes(x = Year,y = .fitted), color = "#E48957")+
@@ -361,7 +360,8 @@ ggplot(data=ht_yc_fit_aug_2 ,aes(x=Year,y=CrudeRate))+
   labs(title = "Year vs CrudeRate",
     x = "Year",
     y = "Cruderate"
-  ) 
+  )
+
 
 
 
