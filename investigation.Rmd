@@ -365,21 +365,21 @@ CA <- Data %>%
   mutate(rate_group = factor(rate_group))
 
 set.seed(888)
-Deaths_split <- initial_split(CA, prop = 0.80)
+CrudeRate_split <- initial_split(CA, prop = 0.80)
 
-train_data <- training(Deaths_split)
-test_data  <- testing(Deaths_split)
+train_data <- training(CrudeRate_split)
+test_data  <- testing(CrudeRate_split)
 
-Deaths_fit <- logistic_reg() %>%
+CrudeRate_fit <- logistic_reg() %>%
   set_engine("glm") %>%
-  fit(rate_group ~ Year + AgeGroup + Sex + Diagnosis,
+  fit(rate_group ~ AgeGroup + Sex + Diagnosis,
       data = train_data,
       fimily = "binomial")
 
-Deaths_pred <- predict(Deaths_fit, test_data, type = "prob") %>%
+CrudeRate_pred <- predict(CrudeRate_fit, test_data, type = "prob") %>%
   bind_cols(test_data)
 
-Deaths_pred %>%
+CrudeRate_pred %>%
   roc_curve(
     truth = rate_group,
     .pred_1,
@@ -388,20 +388,23 @@ Deaths_pred %>%
   autoplot()
 
 
-Deaths_pred %>%
+CrudeRate_pred %>%
   roc_auc(
     truth = rate_group,
     .pred_1,
     event_level = "second"
   )
 
-cutoff_prob <- 0.5
-Deaths_pred %>%
+cutoff_prob <- 0.25
+CrudeRate_pred %>%
   mutate(
-    rate_group      = if_else(rate_group == 1, "high_risk", "low_risk"),
-    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high_risk", "labelled low_risk")
+    rate_group      = if_else(rate_group == 1 , "high_CrudeRate", "low_CrudeRate"),
+    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high-CrudeRate", "labelled low-CrudeRate")
   ) %>%
   count(rate_group_pred, rate_group) %>%
   pivot_wider(names_from = rate_group, values_from = n) %>%
-  kable(col.names = c(" ", "low_risk", "high_risk"))
+  kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
+```
+```{r}
+
 ```
