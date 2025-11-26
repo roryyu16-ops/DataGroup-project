@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(tidymodels)
-
+library(knitr)
 
 ```
 
@@ -35,12 +35,9 @@ Data<- MArea %>%
 
 ## Research Question
 
-Our main research question is to explore the overall trends of heart disease mortality in Scotland, and to identify how mortality rates vary across different demographic categories, such as gender, geographical area, age group, and year.
-
-Our aim was to find any long-term patterns or if there were more predominant groups of people which show higher mortality rates.
+Our main research question is to explore the differences in heart disease mortality in Scotland, and to identify how mortality rates vary across different demographic categories, such as gender, geographical area, age group, and year. The goal is to identify any long-term patterns or to determine whether certain groups consistently exhibit higher mortality rates than others. We also aim to provide risk predictions for the population of Scotland through the use of modelling. 
 
 This particular dataset interested our group as heart diseases can affect anyone and is also known as one of the main causes of death globally. We all have a risk of getting heart disease and it was interesting to us to find what group of people are most at risk. 
-
 
 ## Data Overview
 
@@ -48,7 +45,23 @@ We are using the 'Heart Disease Mortality by Council Area' dataset from the Scot
 
 This dataset consists of 17820 rows and 14 variables (columns). 
 
-Our focus was on the different demographic and geographic categories, so from the start we cleaned up the data from "MArea" into "Data" where there are 7230 rows and 7 variables:
+Our focus was on the different demographic and geographic categories, so from the start we cleaned up the data from "MArea" into "Data" where there are 7230 rows and 7 variables (columns):
+
+
+```{r}
+overview <- tribble(
+  ~Variable,    ~Description,                               ~Type,
+  "Year",       "Year of recorded data",                    "Numeric",
+  "CA",         "Council area code",                        "Categorical",
+  "AgeGroup",   "Defined age range",                        "Categorical",
+  "Sex",        "Male or female",                           "Categorical",
+  "Diagnosis",  "Specific heart-disease-related diagnosis", "Categorical",
+  "CrudeRate",  "Raw mortality rate",                        "Numeric",
+  "EASR",       "European Age-Standardised Rate",          "Numeric"
+)
+
+kable(head(overview), format = ("html"))
+```
 
 - Year – year of recorded data
 - CA – council area code
@@ -58,13 +71,12 @@ Our focus was on the different demographic and geographic categories, so from th
 - CrudeRate – raw mortality rate
 - EASR – European Age-Standardised Rate, allowing better comparisons across groups
 
-This allowed us to conduct our findings more easily and made the data look less messy and easier to look at, as we removed the unnecessary variables, duplicated measures, and variables irrelevant to our research question.
 
 Additionally to support our research aim, we made additional variables to categorise our data better and so we could analyse and evaluate the data more easily. The additional variables will be mentioned in the findings.
 
 ## Exploratory Statistics
 
-We began by 
+We began by categorising our data into subgroups, grouping age groups, sex and diagnosis into smaller groups. We then matched each subgroup with their mean crude rates to see how they differ.
 
 ```{r, echo = FALSE}
 Data %>%
@@ -83,39 +95,14 @@ Data %>%
               median_cruderate = median(CrudeRate , na.rm = TRUE)) 
 ```
 
-Extreme age dependence:
-The average CrudeRate (314.0) of the population aged 75 and above is tens to hundreds of times higher than other age groups, with a median of 63.0, indicating a significant concentration of risk in this group.
-The median of the population under 75 years old is 0, but the average is 4.15, indicating that a few high-value individuals have raised the mean and the overall distribution is highly skewed to the right.
+These summary statistics show us that age is the most dominant factor in which the we can see the biggest difference in crude rates, both in mean and median. This is also confirmed from comparing the two sections All and under 75 years, where the rates for under 75 years are significantly lower.
 
-Full data conceals the truth:
-The mean and median of "all ages" are close (72.8 vs 72.3), but after splitting, it can be seen that the age stratification effect is extremely strong, and directly using global statistics will ignore high-risk elderly groups.
-
-Suggestion: 
-Public health resources should prioritize the population aged 75 and above, and further analyze high-value outliers for the<75 age group.
-
-Significant gender differences:
-The average CrudeRate of males (47.9) is 72% higher than that of females (27.8), but the median for both is 0, indicating that most individuals have no events, but males have more extreme high-risk cases.
-The global median (1.95) falls between males and females, indicating that the dataset may contain mixed gender ratios.
-
-Clear classification of disease severity:
-
-Coronary heart disease: The mean and median values are close (116.0 vs 112.0), indicating a relatively symmetrical data distribution, stable risk, and generally high risk.
-Heart failure: The mean (2.32) is much higher than the median (0), indicating that the vast majority of cases have no events, but there are a small number of individuals with extremely high risk.
-
-Clinical priority ranking:
-Coronary heart disease>heart attack>heart failure, which conforms to the common sense of disease mortality rate, but it is necessary to be alert to outliers in heart failure.
-
-## Findings
-
-Think of this as the text of your presentation with some extra detail to cover what there was not time to discuss in the presentation. This might include any assumptions you made when doing your analysis, any limitations of the work you have done or any ideas you have for future work. Feel free to split this section into subsections to make it easier to read. 
-
-The length should be roughly 1,500 words. 
-
-You can also load your data here and present any analysis results / plots.
-Make sure to hide your code with  `echo = FALSE` unless the point you are trying to make is about the code itself, in which case you should show your code.
+The difference between sexes is also quite clear, with men have a noticeably higher rate than women. Across the three diagnoses, coronary heart disease has the highest rates, followed by heart attacks , while heart failure has the lowest rates.
 
 
 ## Data Visualisations
+
+To understand more about this dataset, we tried to find more patterns by making visualisations
 
 ### 1. EASR
 
@@ -174,12 +161,12 @@ CA_summary <- CA_Regions %>%
   )
 ```
 
-We found that there was not much variation across the regions, so the geographical location does not affect the crude rate for heart diseases, showing that this is not something we should keep looking into. This could mean that the risk factors such as oil intake or physical activity are quite similar throughout each region. So we decided to investigate the other factors in this dataset.
+We found that there was not much variation across the regions except for the North-east, where rates are relatively around 5% higher than the other regions. We concluded that there is no trend between geographical location and crude rate for heart diseases, and we decided that this is not something we had to keep looking into. This could also mean that the risk factors such as oil intake or physical activity are quite similar throughout each region. So we decided to investigate the other factors in this dataset.
 
 
 ### 3. Sex 
 
-Then, to visualise the how the crude rate differs between sex, we made a bar chart with the mean value of crude rates across all females and males. 
+Then, to visualise the how the crude rate differs between sex, we made a bar chart with the mean value of crude rates across all men and women. 
 
 ```{r, echo = FALSE, warning= FALSE}
 # Bar chart of Sex
@@ -199,7 +186,7 @@ ggplot(table_sex)+
        fill="Sex")
 ```
 
-We found that males have a significantly higher mean crude rate than females, almost double. This shows that males are more twice as likely to die from heart diseases than females. This may be caused by eating habits, physical activity, or even biological reasons. We figured this was worth looking into.
+We found that men have a significantly higher mean crude rate than women, almost double. This shows that men are more twice as likely to die from heart diseases than women This may be caused by eating habits, physical activity, or even biological reasons. We figured this was worth looking into.
 
 
 ### 4. Age
@@ -225,6 +212,13 @@ ggplot(table_age)+
        fill="AgeGroup")
 ```
 
+The clear takeaway form this visualisation is 75 plus year olds have the highest mean crude rate. This tells us that this group of people (aged 75 plus) are most likely to suffer from heart disease.
+
+Extreme age dependence:
+The average CrudeRate (314.0) of the population aged 75 and above is tens to hundreds of times higher than other age groups, with a median of 63.0, indicating a significant concentration of risk in this group.
+The median of the population under 75 years old is 0, but the average is 4.15, indicating that a few high-value individuals have raised the mean and the overall distribution is highly skewed to the right.
+
+Public Health resources could be prioritized for the population aged 75 and above, as they have the highest mean and median rates, while other age groups have a median of 0. 
 
 
 ### 5. Year
@@ -248,9 +242,11 @@ ggplot(summary_diagnosis, aes(x = Year, y = mean_cruderate)) +
   theme_minimal()
 ```
 
-We found that the mean crude rate falls throughout the years until 2019, where it increases at a faster rate. This tells us that
+We found that the mean crude rate falls throughout the years until 2019, where it increases at a faster rate. This does not tell us much about if the year has any correlation with crude rate, but it shows how it has changed over the years and we could use it to compare with other variables. 
 
 ### 6. Diagnosis
+
+Finally, for the single variables, we looked at the diagnoses and how crude rate differed between the three. 
 
 ``` {r, echo = FALSE, warning= FALSE}
 # Bar chart of Diagnosis
@@ -268,26 +264,29 @@ ggplot(table_Diagnosis)+
        x="Diagnosis",
        y="Mean Cruderate",
        fill="Diagnosis")
-
 ```
+
+This visualisation does not tell us much, but we can clearly see the distribution of deaths among the three diagnoses, with coronary heart diseases with the highest rate, followed by heart attacks, and heart failure with the lowest rate. 
 
 ### 7. Combining variables 
 
+After investigating each variable individually against the mean crude rate, we figured that each variable did not tell us much on its own. This led us to 
+
 ```{r, echo = FALSE, message= FALSE}
-#Graph of the Year and Sex
-  Table_6<-Data %>%
-  group_by(Sex,Year) %>%
+#Table 7(Age and Year)
+Table_5 <- Data %>%
+  group_by(AgeGroup,Year) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))
-  
-ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
-  geom_col(position = position_dodge(width = 0.8)) +
+            median_cruderate = median(CrudeRate , na.rm = TRUE)) 
+ggplot(Table_5, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
+  geom_line(size = 1) +
+  geom_point() +
   labs(
-    title = "Number of Deaths by Sex over Years",
+    title = "Mean crude rate by AgeGroup over Years",
     x = "Year",
-    y = "Mean crude rate",
-    fill = "Sex"
-  )
+    y = "Mean crude rate"
+  ) +
+  theme_minimal()
 ```
 
 
@@ -295,27 +294,83 @@ ggplot(Table_6, aes(x = Year, y = mean_cruderate, fill = Sex)) +
 We then plotted year against crude rate
 
 ```{r, echo = FALSE, message= FALSE}
-#Graph of Year and Age
-Table_7<-Data %>%
-    group_by(AgeGroup,Year) %>%
-    summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-              median_cruderate = median(CrudeRate , na.rm = TRUE)) 
-  ggplot(Table_7, aes(x = Year, y = mean_cruderate, color = AgeGroup , group = AgeGroup)) +
-    geom_line(size = 1) +
-    geom_point() +
-    labs(
-      title = "Number of Deaths by AgeGroup over Years",
-      x = "Year",
-      y = "Number of Deaths"
-    ) +
-    theme_minimal()
+#Table 8(Diagnosis and year)
+summary_diagnosis <- Data %>%
+group_by(Year, Diagnosis) %>%
+summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
+
+ggplot(summary_diagnosis,aes(x = Year, y = mean_cruderate, color = Diagnosis, group = Diagnosis)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(
+    title = "Mean crude rate by Diagnosis over Years",
+    x = "Year",
+    y = "Mean crude rate"
+  ) +
+  theme_minimal()
 ```
 
 
 
-### Summary 
 
-Going through all these visualisations, we concluded that males aged over 75 are most likely to suffer from heart disease and that year
+```{r, echo = FALSE, message= FALSE}
+#Table 9 (Agegroup and Diagnosis)
+table_1<- Data %>%
+  group_by(AgeGroup,Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
+
+ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  labs(
+    title = "Mean crude rate by heart-disease type and Agegroup",
+    x = "Heart-disease type",
+    y = "Mean crude rate",
+    fill = "AgeGroup"
+  )
+```
+
+
+
+
+
+```{r, echo = FALSE, message= FALSE}
+#Table 10 (Sex and Diagnosis)
+Table_2<-Data %>%
+  group_by(Sex,Diagnosis) %>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+            median_cruderate = median(CrudeRate , na.rm = TRUE))
+ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
+  geom_col(position = position_dodge(width = 0.8)) +
+  labs(
+    title = "Mean crude rate by heart-disease type and sex",
+    x = "Heart-disease type",
+    y = "Mean crude rate",
+    fill = "Sex"
+  )
+```
+
+
+
+Going through all these visualisations and the exploratory statistics, we concluded that men aged over 75 are most likely to suffer from heart disease and that year
+
+
+
+
+Full data conceals the truth:
+The mean and median of "all ages" are close (72.8 vs 72.3), but after splitting, it can be seen that the age stratification effect is extremely strong, and directly using global statistics will ignore high-risk elderly groups.
+
+Significant gender differences:
+The average CrudeRate of men (47.9) is 72% higher than that of women (27.8), but the median for both is 0, indicating that most individuals have no events, but men have more extreme high-risk cases.
+The global median (1.95) falls between men and women, indicating that the dataset may contain mixed gender ratios.
+
+Coronary heart disease: The mean and median values are close (116.0 vs 112.0), indicating a relatively symmetrical data distribution, stable risk, and generally high risk.
+Heart failure: The mean (2.32) is much higher than the median (0), indicating that the vast majority of cases have no events, but there are a small number of individuals with extremely high risk.
+
+Coronary heart disease>heart attack>heart failure, which conforms to the common sense of disease mortality rate, but it is necessary to be alert to outliers in heart failure.
+
+
 
 ## Predictive Modelling
 
