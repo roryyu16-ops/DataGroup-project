@@ -525,7 +525,44 @@ Although the linear regression model has limitations, it successfully identifies
 3. Consider exploring non-linear models or classification models (e.g., logistic regression) for further insights
 
 
-## Model Evaluation
+## logistic regression model
+```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
+CA <- Data %>% 
+  mutate(rate = CrudeRate / 1000) %>% 
+  mutate(rate_group = if_else(rate <= median(rate, na.rm = TRUE), 0, 1)) %>% 
+  mutate(rate_group = factor(rate_group))
+
+set.seed(888)
+CrudeRate_split <- initial_split(CA, prop = 0.80)
+
+train_data <- training(CrudeRate_split)
+test_data  <- testing(CrudeRate_split)
+
+CrudeRate_fit <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(rate_group ~ AgeGroup + Sex + Diagnosis,
+      data = train_data,
+      fimily = "binomial")
+
+CrudeRate_pred <- predict(CrudeRate_fit, test_data, type = "prob") %>%
+  bind_cols(test_data)
+
+CrudeRate_pred %>%
+  roc_curve(
+    truth = rate_group,
+    .pred_1,
+    event_level = "second"
+  ) %>%
+  autoplot()
+
+
+CrudeRate_pred %>%
+  roc_auc(
+    truth = rate_group,
+    .pred_1,
+    event_level = "second"
+  )
+```
 
 
 

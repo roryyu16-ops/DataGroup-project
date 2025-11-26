@@ -390,13 +390,20 @@ CrudeRate_fit <- logistic_reg() %>%
 CrudeRate_pred <- predict(CrudeRate_fit, test_data, type = "prob") %>%
   bind_cols(test_data)
 
-CrudeRate_pred %>%
+AUC_ROC <- CrudeRate_pred %>%
   roc_curve(
     truth = rate_group,
     .pred_1,
     event_level = "second"
-  ) %>%
-  autoplot()
+  )
+  
+AUC_ROC %>% autoplot()
+
+
+best_cutoff <- AUC_ROC %>%
+  mutate(J = sensitivity + specificity - 1) %>%
+  filter(J == max(J)) %>%
+  select(.threshold, sensitivity, specificity, J)
 
 
 CrudeRate_pred %>%
@@ -405,17 +412,6 @@ CrudeRate_pred %>%
     .pred_1,
     event_level = "second"
   )
-
-roc_df <- CrudeRate_pred %>%
-  roc_curve(
-    truth = rate_group,
-    .pred_1,
-    event_level = "second"
-  )
-best_cutoff <- roc_df %>%
-  mutate(J = sensitivity + specificity - 1) %>%
-  filter(J == max(J)) %>%
-  select(.threshold, sensitivity, specificity, J)
 
 best_cutoff
 
