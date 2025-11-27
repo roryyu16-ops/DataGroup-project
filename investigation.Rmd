@@ -201,6 +201,7 @@ ggplot(table_Diagnosis)+
 
 #Table 1 (Agegroup and Diagnosis)
 table_1<- Data %>%
+  filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
@@ -217,6 +218,7 @@ ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
 
 #Table 2 (Sex and Diagnosis)
 Table_2<-Data %>%
+  filter(!Sex %in% c("All"))%>%
   group_by(Sex,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))
@@ -248,6 +250,7 @@ ggplot(CA_summary_with_year, aes(x = Year, y =mean_cruderate,  fill = Region)) +
 #Graph of the Year
 #Table 4(Sex and year)
   Table_4<-Data %>%
+  filter(!Sex %in% c("All"))%>%
   group_by(Sex,Year) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))
@@ -267,6 +270,7 @@ ggplot(Table_4, aes(x = Year, y = mean_cruderate, fill = Sex)) +
 
   Table_5<-Data %>%
     group_by(AgeGroup,Year) %>%
+    filter(!AgeGroup %in% c("All"))%>%
     summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
               median_cruderate = median(CrudeRate , na.rm = TRUE)) 
   ggplot(Table_5, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
