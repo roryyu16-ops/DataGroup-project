@@ -56,28 +56,20 @@ style_xaringan(
 )
 ```
 
-class: inverse, center, middle
-
-# Introduction
-
----
-
-#Introducion
-
-
-
 ---
 
 
 class: inverse, center, middle
 
-# Topic
+# Research Question
 
 ---
 
-class: center, middle
+# Research Question
 
-## To explore the overall trends of heart disease mortality in Scotland, and to identify how mortality rates vary across different categories.
+- How do heart disease mortality rates vary across Scotland, and which factors are more important?
+
+- Aim: to use predictive modelling to provide risk predictions for the Scottish population
 
 ---
 
