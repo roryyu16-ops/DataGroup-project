@@ -377,7 +377,7 @@ ggplot(data=ht_yc_fit_aug_3 ,aes(x=Year,y=CrudeRate))+
 ```{r}
 
 CA <- Data %>% 
-  mutate(rate = CrudeRate / 1000) %>%
+  mutate(rate = CrudeRate ) %>%
   mutate(rate_group = if_else(rate <= median(rate, na.rm = TRUE), 0, 1)) %>% 
   mutate(rate_group = factor(rate_group))
 
