@@ -396,22 +396,13 @@ CrudeRate_fit <- logistic_reg() %>%
 CrudeRate_pred <- predict(CrudeRate_fit, test_data, type = "prob") %>%
   bind_cols(test_data)
 
-AUC_ROC <- CrudeRate_pred %>%
+CrudeRate_pred %>%
   roc_curve(
     truth = rate_group,
     .pred_1,
     event_level = "second"
-  )
-  
-AUC_ROC %>% autoplot()
-
-
-best_cutoff <- AUC_ROC %>%
-  mutate(J = sensitivity + specificity - 1) %>%
-  filter(J == max(J)) %>%
-  select(.threshold, sensitivity, specificity, J)
-
-best_cutoff
+  ) %>% 
+  autoplot()
 
 
 CrudeRate_pred %>%
@@ -421,7 +412,27 @@ CrudeRate_pred %>%
     event_level = "second"
   )
 
-cutoff_prob <- best_cutoff$.threshold
+cutoff_prob<-0.25
+CrudeRate_pred %>%
+  mutate(
+    rate_group      = if_else(rate_group == 1 , "high_CrudeRate", "low_CrudeRate"),
+    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high-CrudeRate", "labelled low-CrudeRate")
+  ) %>%
+  count(rate_group_pred, rate_group) %>%
+  pivot_wider(names_from = rate_group, values_from = n) %>%
+  kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
+
+cutoff_prob<-0.5
+CrudeRate_pred %>%
+  mutate(
+    rate_group      = if_else(rate_group == 1 , "high_CrudeRate", "low_CrudeRate"),
+    rate_group_pred = if_else(.pred_1 > cutoff_prob, "labelled high-CrudeRate", "labelled low-CrudeRate")
+  ) %>%
+  count(rate_group_pred, rate_group) %>%
+  pivot_wider(names_from = rate_group, values_from = n) %>%
+  kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
+
+cutoff_prob<-0.75
 CrudeRate_pred %>%
   mutate(
     rate_group      = if_else(rate_group == 1 , "high_CrudeRate", "low_CrudeRate"),
