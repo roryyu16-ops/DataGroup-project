@@ -4,8 +4,10 @@
     <title>Heart Disease Mortality in the Scotland</title>
     <meta charset="utf-8" />
     <meta name="author" content="Artery Party   Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk" />
-    <meta name="date" content="2025-11-27" />
+    <meta name="date" content="2025-11-28" />
     <script src="libs/header-attrs-2.30/header-attrs.js"></script>
+    <script src="libs/kePrint-0.0.1/kePrint.js"></script>
+    <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
   <body>
@@ -15,9 +17,6 @@ class: center, middle, inverse, title-slide
 .title[
 # Heart Disease Mortality in the Scotland
 ]
-.subtitle[
-## Presentation subtitle (if any)
-]
 .author[
 ### Artery Party <br> Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk
 ]
@@ -25,7 +24,7 @@ class: center, middle, inverse, title-slide
 ### University of Edinburgh
 ]
 .date[
-### 2025-11-27
+### 2025-11-28
 ]
 
 ---
@@ -44,28 +43,24 @@ class: center, middle, inverse, title-slide
 
 
 
-class: inverse, center, middle
-
-# Introduction
-
----
-
-#Introducion
-
-
-
----
 
 
 class: inverse, center, middle
 
-# Topic
+# Research Question
 
 ---
 
 class: center, middle
 
-## To explore the overall trends of heart disease mortality in Scotland, and to identify how mortality rates vary across different categories.
+# Research Question
+
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; How do heart disease mortality rates vary across Scotland, and which factors are more important? &lt;/span&gt;
+
+# Aim
+
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; to use predictive modelling to provide risk predictions for the Scottish population &lt;/span&gt;
+
 
 ---
 
@@ -76,86 +71,138 @@ class: inverse, center, middle
 ---
 # How do we clean the data?
 
---
-- 
+.pull-left[
 
---
-- 
+- Select key variables. 
+- Remove NA values.
 
 
---
-# Data Overview
+```
+## # A tibble: 7,230 × 3
+##    AgeGroup     Sex     Diagnosis             
+##    &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;                 
+##  1 0-44 years   Males   Coronary Heart Disease
+##  2 0-44 years   Females Coronary Heart Disease
+##  3 45-64 years  Males   Coronary Heart Disease
+##  4 45-64 years  Females Coronary Heart Disease
+##  5 65-74 years  Males   Coronary Heart Disease
+##  6 65-74 years  Females Coronary Heart Disease
+##  7 75plus years Males   Coronary Heart Disease
+##  8 75plus years Females Coronary Heart Disease
+##  9 0-44 years   Males   Coronary Heart Disease
+## 10 0-44 years   Females Coronary Heart Disease
+## # ℹ 7,220 more rows
+```
 
-- Year – year of recorded data
 
-- CA – council area code
+]
 
-- AgeGroup – categorical age group
-
-- Sex – male or female
-
-- Diagnosis – specific heart-disease-related diagnosis
-
-- CrudeRate – raw mortality rate
-
-- EASR – European Age-Standardised Rate, allowing better comparisons across groups
+.pull-right[
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Data Overview: &lt;/span&gt;
+&lt;table class="table" style="width: auto !important; "&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt; Variable &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Description &lt;/th&gt;
+   &lt;th style="text-align:left;"&gt; Type &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Year &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Year of recorded data &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Numeric &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; CA &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Council area code &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Categorical &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; AgeGroup &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Defined age range &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Categorical &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Sex &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Male or female &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Categorical &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Diagnosis &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Specific heart-disease-related diagnosis &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Categorical &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; CrudeRate &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Raw mortality rate &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Numeric &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; EASR &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; European Age-Standardised Rate &lt;/td&gt;
+   &lt;td style="text-align:left;"&gt; Numeric &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+]
 
 
 ---
+class: inverse, center, middle
 
 &lt;style&gt;
-.pull-left {
+.my-style .pull-left { 
   float: left;
   width: 15%;
   margin-left: 35%;
 }
 
-.pull-right {
+.my-style .pull-right {
   float: right;
   width: 15%;
   margin-right: 35%;
 }
 &lt;/style&gt;
 
----
-
-class: inverse, center, middle
 
 # Crude Mortality by Six Factors
 
+
+&lt;div class="my-style"&gt;
 .pull-left[
 - EASR  
 - Gender  
+- Age Group  
 ]
 
 .pull-right[
 &lt;p style="margin: 0; padding: 0; text-align: left;"&gt;
-- Age Group  
+- Diagnosis
+- Year
 - Region  
 ]
+&lt;/div&gt;
 
 ---
 
 # EASR
 
---
-&lt;img src="presentation_files/figure-html/unnamed-chunk-2-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-4-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
 
 ---
 
 # Gender
 
---
-&lt;img src="presentation_files/figure-html/unnamed-chunk-3-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-5-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
 
 ---
 
 # Age Group
 
---
-&lt;img src="presentation_files/figure-html/unnamed-chunk-4-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-6-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -163,16 +210,14 @@ class: inverse, center, middle
 
 # Diagnosis
 
---
-&lt;img src="presentation_files/figure-html/unnamed-chunk-5-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-7-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
 
 ---
 
 # Year
 
---
-&lt;img src="presentation_files/figure-html/unnamed-chunk-6-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-8-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
 
 
@@ -181,10 +226,9 @@ class: inverse, center, middle
 
 # Regions
 
---
 
 
-&lt;img src="presentation_files/figure-html/unnamed-chunk-8-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-10-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
 
 ---
@@ -194,20 +238,22 @@ class: inverse, center, middle
 # Crude Mortality by Chart of two variables
 
 ---
+class: center, middle
 
 .pull-left[
-# Agegroup and Diagnosis
 
---
-&lt;img src="presentation_files/figure-html/unnamed-chunk-9-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Agegroup and Diagnosis &lt;/span&gt;
+
+&lt;img src="presentation_files/figure-html/unnamed-chunk-11-1.png" width="130%" style="display: block; margin: auto;" /&gt;
 ]
 
 
 .pull-right[
-# Sex and Diagnosis
 
---
-&lt;img src="presentation_files/figure-html/unnamed-chunk-10-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Sex and Diagnosis &lt;/span&gt;
+
+&lt;img src="presentation_files/figure-html/unnamed-chunk-12-1.png" width="130%" style="display: block; margin: auto;" /&gt;
 ]
 ---
 
@@ -224,27 +270,9 @@ class: inverse, center, middle
 
 ---
 
-# linear regression model
+# Set up
 
 --
-
-```
-## # A tibble: 6 × 5
-##   term                            estimate std.error statistic   p.value
-##   &lt;chr&gt;                              &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
-## 1 (Intercept)                     -3.28     12.4        -0.264 7.91e-  1
-## 2 Year                             0.00157   0.00614     0.256 7.98e-  1
-## 3 split_AgeGroup75plus years       2.71      0.0910     29.8   6.49e-172
-## 4 SexMales                         0.143     0.0352      4.07  4.86e-  5
-## 5 DiagnosisCoronary Heart Disease  1.01      0.0531     19.0   2.84e- 76
-## 6 DiagnosisHeart Attack            0.620     0.0460     13.5   2.97e- 40
-```
-
-&lt;img src="presentation_files/figure-html/unnamed-chunk-11-1.png" width="75%" style="display: block; margin: auto;" /&gt;
-
-```
-## [1] 0.3114551
-```
 
 ```
 ## # A tibble: 6 × 5
@@ -258,22 +286,57 @@ class: inverse, center, middle
 ## 6 DiagnosisHeart Attack             28.6       3.74      7.65  2.58e- 14
 ```
 
-&lt;img src="presentation_files/figure-html/unnamed-chunk-11-2.png" width="75%" style="display: block; margin: auto;" /&gt;
 
-```
-## [1] 0.3448354
-```
+--
+- Year &lt; Is Male &lt; Is Heart Attack &lt; Is Coronary Heart Disease &lt; Is Age 75+
 
-```
-## # A tibble: 2 × 5
-##   term        estimate std.error statistic p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
-## 1 (Intercept) -37.3     1245.      -0.0300   0.976
-## 2 Year          0.0257     0.617    0.0416   0.967
-```
+---
+# Residual plot 
 
-&lt;img src="presentation_files/figure-html/unnamed-chunk-11-3.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-14-1.png" width="45%" style="display: block; margin: auto;" /&gt;
 
+--
+- Clustered residuals with a large empty gap  
+Most groups have low crude mortality rates；Only specific groups (e.g., 75+ or certain diagnoses) have very high mortality. Hence,this creates natural gaps in the distribution, independent of the mode  
+
+--
+- Fan-shaped pattern  
+i. Missing important predictors  
+ii. Non-linear relationships that the linear model cannot capture  
+iii. The limitations of simple transformations  
+
+---
+# log ( CrudeRate + 1 )
+
+
+
+&lt;img src="presentation_files/figure-html/unnamed-chunk-16-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+class: inverse, center, middle
+
+# Adjusted R²
+
+---
+# Scatter Plot: CrudeRate vs Year
+
+
+
+
+&lt;img src="presentation_files/figure-html/unnamed-chunk-18-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+# Brief summary
+
+Although the linear regression model has limitations, it successfully identifies three key factors that may influence heart disease mortality:  
+
+i. Age group (especially 75+)  
+
+ii. Sex (male)  
+
+iii. Diagnosis type (Coronary Heart Disease, Heart Attack)  
 
 ---
 
@@ -286,29 +349,32 @@ class: inverse, center, middle
 # Logistic regression model
 
 --
-Aim:
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Aim: &lt;/span&gt;
+
+- To develop and evaluate a logistic regression model that predicts high/low crude-rate risk from age group, sex and diagnosis.  
+
 
 --
-Data:
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Data: &lt;/span&gt;
+
+- X = Age + Sex + Diagnosis  
+
+- Y= Rate -&gt; 0,1 because aim to classify high/low risk  
+
+- train / test data set (randomly 80% / 0.2%)  
+
 
 --
-i. X = Age + Sex + Diagnosis 
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Model: &lt;/span&gt;
 
---
-ii. Y= Rate -&gt; 0,1 because aim to classify high/low risk
-
---
-iii. train / test data set (randomly 80% / 0.2%)
-
---
-Model: R,GLM -&gt; model train and model test
+- GLM (Generalized Linear Model) -&gt; model train and model test  
 
 ---
 
 # Logistic regression model
 
 --
-&lt;img src="presentation_files/figure-html/unnamed-chunk-12-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+&lt;img src="presentation_files/figure-html/unnamed-chunk-19-1.png" width="75%" style="display: block; margin: auto;" /&gt;
 
 ```
 ## # A tibble: 1 × 3
@@ -322,235 +388,91 @@ Model: R,GLM -&gt; model train and model test
 #Sensitivity and specificity
 
 --
+.pull-left[
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt;  cutoff = 0.25 &lt;/span&gt;
+- Sensitivity = 30 / ( 30 + 32 ) ≈ 0.4839
+- Specificity = 534 / ( 534 + 20 ) ≈ 0.9640  
+]
+.pull-right[
 
 |                        | high_CrudeRate| low_CrudeRate|
 |:-----------------------|--------------:|-------------:|
 |labelled high-CrudeRate |             30|            32|
 |labelled low-CrudeRate  |             20|           534|
+]
 
+
+--
+.pull-left[
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt;  cutoff = 0.5 &lt;/span&gt;
+- Sensitivity = 24 / ( 24 + 13 ) ≈ 0.6486
+- Specificity = 553 / ( 553 + 26 ) ≈ 0.9551  
+]
+.pull-right[
 
 |                        | high_CrudeRate| low_CrudeRate|
 |:-----------------------|--------------:|-------------:|
 |labelled high-CrudeRate |             24|            13|
 |labelled low-CrudeRate  |             26|           553|
+]
 
+--
+.pull-left[
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; cutoff = 0.75 &lt;/span&gt;
+- Sensitivity = NA
+- Specificity = 566 / ( 566 + 41 ) ≈ 0.9324
+]
+.pull-right[
 
 |                        | high_CrudeRate| low_CrudeRate|
 |:-----------------------|--------------:|-------------:|
 |labelled high-CrudeRate |              9|            NA|
 |labelled low-CrudeRate  |             41|           566|
-
-
----
-
-# Summary of Model 2
-
---
-
-
----
-
-# Hello World
-
-- Click the `Knit` button to compile your presentation
-
-- Make sure to commit and push all resulting files to your GitHub repo
-
-
----
-
-# xaringan
-
-- The presentation is created using the `xaringan` package
-
-- Use `---` to separate slides and `--` for incremental builds
-
---
-
-- Like this
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
-
-.pull-left[
-or text in two columns `\(^*\)`
-]
-.pull-right[
-- like
-- this
-]
-
-.footnote[
-[*] And add footnotes
 ]
 
 ---
-
-# Code
-
-
-``` r
-# a boring regression
-model &lt;- lm(dist ~ speed, data = cars)
-tidy(model)
-```
-
-```
-## # A tibble: 2 × 5
-##   term        estimate std.error statistic  p.value
-##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-## 1 (Intercept)   -17.6      6.76      -2.60 1.23e- 2
-## 2 speed           3.93     0.416      9.46 1.49e-12
-```
-
-``` r
-glance(model)
-```
-
-```
-## # A tibble: 1 × 12
-##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-##       &lt;dbl&gt;         &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-## 1     0.651         0.644  15.4      89.6 1.49e-12     1  -207.  419.  425.
-## # ℹ 3 more variables: deviance &lt;dbl&gt;, df.residual &lt;int&gt;, nobs &lt;int&gt;
-```
-
----
-
-# Plots
-
-
-
-&lt;img src="presentation_files/figure-html/plot-iris-1.png" width="80%" /&gt;
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-&lt;img src="presentation_files/figure-html/unnamed-chunk-16-1.png" width="100%" /&gt;
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-&lt;table&gt;
- &lt;thead&gt;
-  &lt;tr&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Sepal.Width &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Petal.Length &lt;/th&gt;
-   &lt;th style="text-align:right;"&gt; Petal.Width &lt;/th&gt;
-   &lt;th style="text-align:left;"&gt; Species &lt;/th&gt;
-  &lt;/tr&gt;
- &lt;/thead&gt;
-&lt;tbody&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.2 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.3 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 4.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.1 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.5 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.0 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.6 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.2 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-  &lt;tr&gt;
-   &lt;td style="text-align:right;"&gt; 5.4 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 3.9 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 1.7 &lt;/td&gt;
-   &lt;td style="text-align:right;"&gt; 0.4 &lt;/td&gt;
-   &lt;td style="text-align:left;"&gt; setosa &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-
----
-
-# Images
-
-&lt;div class="figure" style="text-align: center"&gt;
-&lt;img src="img/edinburgh-castle.jpg" alt="Image credit: Photo by Jörg Angeli on Unsplash." width="55%" /&gt;
-&lt;p class="caption"&gt;Image credit: Photo by Jörg Angeli on Unsplash.&lt;/p&gt;
-&lt;/div&gt;
-
-Or you can also include a full page image. See next slide.
-
----
-
 
 class: inverse, center, middle
-background-image: url(img/edinburgh-castle.jpg)
-background-size: contain
----
 
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &amp;#36;\alpha+\beta$ renders `\(\alpha+\beta\)`. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-`$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$`
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
+# Conclusion
 
 ---
 
-# Feeling adventurous?
+# Biases:
 
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Gender: &lt;/span&gt;
+Heart disease may be influenced by behaviors such as smoking rate and alcohol consumption.
+The model may attribute these hidden effects to gender itself, thus exaggerating gender differences.
 
-- You are welcome to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Time: &lt;/span&gt;
+Certain infectious diseases in some years, such as COVID-19, may also cause abnormal mortality rates.
 
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Dataset selection: &lt;/span&gt;
+A single dataset may be affected by multiple factors (such as collection methods), leading to unrealistic results
 
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
+(for example: many regions have a mortality rate of 0).
+
+---
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Limitations: &lt;/span&gt;
+
+Insufficient explanatory variables:  
+The data lacks important factors such as health behaviors, lifestyle, and economic conditions,which makes the model unable to properly explain the differences in mortality rate.
+
+The threshold for risk classification may affect results:  
+Different thresholds may produce different conclusions.
+
+Structural gaps in the data itself:   
+The distribution between high-mortality and low-mortality groups is very unbalanced,causing clustering patterns in the residual plot
+
+&lt;span style="font-size: 1.4em; font-weight: bold;"&gt; Future Improvements: &lt;/span&gt;
+
+Data selection:
+- Add more explanatory variables (such as regional economic level, disease behavior risk, hospital resources)
+- Expand the sample range (e.g.include longer time span)
+Data processing:
+-	linear regression model--Try more complex transformations
+-	Logistic regression model--Optimize the high/low risk classification method (e.g.quartile)
+-	Control the influence of external events (e.g., stratify by COVID years before analysis)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

@@ -56,7 +56,6 @@ style_xaringan(
 )
 ```
 
----
 
 
 class: inverse, center, middle
@@ -65,11 +64,16 @@ class: inverse, center, middle
 
 ---
 
+class: center, middle
+
 # Research Question
 
-- How do heart disease mortality rates vary across Scotland, and which factors are more important?
+<span style="font-size: 1.4em; font-weight: bold;"> How do heart disease mortality rates vary across Scotland, and which factors are more important? </span>
 
-- Aim: to use predictive modelling to provide risk predictions for the Scottish population
+# Aim
+
+<span style="font-size: 1.4em; font-weight: bold;"> to use predictive modelling to provide risk predictions for the Scottish population </span>
+
 
 ---
 
@@ -81,15 +85,25 @@ class: inverse, center, middle
 # How do we clean the data?
 
 .pull-left[
---
-- 1. Select key variables. 
 
---
-- 2. Remove NA values.
+- Select key variables. 
+- Remove NA values.
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+
+Data[ , 3:5]
+
+```
+
+
 ]
 
 .pull-right[
-```{r, echo = FALSE}
+<span style="font-size: 1.4em; font-weight: bold;"> Data Overview: </span>
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+
+library(kableExtra)
+
 overview <- tribble(
   ~Variable,       ~Description,                                  ~Type,
   "Year",          "Year of recorded data",                       "Numeric",
@@ -107,46 +121,29 @@ overview %>%
 ```
 ]
 
---
-# Data Overview
-
-- Year – year of recorded data
-
-- CA – council area code
-
-- AgeGroup – categorical age group
-
-- Sex – male or female
-
-- Diagnosis – specific heart-disease-related diagnosis
-
-- CrudeRate – raw mortality rate
-
-- EASR – European Age-Standardised Rate, allowing better comparisons across groups
-
 
 ---
+class: inverse, center, middle
 
 <style>
-.pull-left {
+.my-style .pull-left { 
   float: left;
   width: 15%;
   margin-left: 35%;
 }
 
-.pull-right {
+.my-style .pull-right {
   float: right;
   width: 15%;
   margin-right: 35%;
 }
 </style>
 
----
-
-class: inverse, center, middle
 
 # Crude Mortality by Six Factors
 
+
+<div class="my-style">
 .pull-left[
 - EASR  
 - Gender  
@@ -159,12 +156,12 @@ class: inverse, center, middle
 - Year
 - Region  
 ]
+</div>
 
 ---
 
 # EASR
 
---
 ```{r out.width= "75%", fig.align="center", echo = FALSE, warning=FALSE, message=FALSE}
 
 ggplot(data = Data,
@@ -188,10 +185,10 @@ ggplot(data = Data,
 
 # Gender
 
---
 ```{r out.width= "75%", fig.align="center", echo = FALSE}
 # Bar chart of Sex
-table_sex<-Data %>%
+table_sex<-Data %>% 
+  filter(!Sex %in% c("All"))%>%
   group_by(Sex) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))
@@ -204,10 +201,7 @@ ggplot(table_sex)+
   labs(title = "The mean value of cruderate for different Sexs",
        x="Sex",
        y="Mean Cruderate",
-       fill="Sex") +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-  )
+       fill="Sex")
 ```
 
 
@@ -215,10 +209,10 @@ ggplot(table_sex)+
 
 # Age Group
 
---
-```{r out.width= "75%", fig.align="center",fig.width=7, echo = FALSE}
+```{r out.width= "75%", fig.align="center",fig.width=7, echo = FALSE, warning=FALSE}
 #Bar chart of Age Group
 table_age<-Data %>%
+  filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
@@ -229,13 +223,10 @@ ggplot(table_age)+
                               y=mean_cruderate,
                               fill=AgeGroup),
                               stat = "identity")+
-  labs(title = "The mean value of cruderate for different Age Groups",
+  labs(title = "The mean value of cruderate for different AgeGroups",
        x="Age",
        y="Mean Cruderate",
-       fill="AgeGroup") +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-  )
+       fill="AgeGroup")
 ```
 
 
@@ -244,7 +235,6 @@ ggplot(table_age)+
 
 # Diagnosis
 
---
 ```{r out.width= "75%", fig.align="center",fig.width=7, echo = FALSE, warning=FALSE, message=FALSE}
 table_Diagnosis<-Data %>%
   group_by(Diagnosis) %>%
@@ -267,7 +257,6 @@ ggplot(table_Diagnosis)+
 
 # Year
 
---
 ```{r out.width= "75%", fig.align="center",fig.width=7, echo = FALSE, warning=FALSE, message=FALSE}
 summary_diagnosis <- Data%>%
   group_by(Year) %>%
@@ -291,7 +280,6 @@ ggplot(summary_diagnosis, aes(x = Year, y = mean_cruderate)) +
 
 # Regions
 
---
 ```{r echo = FALSE}
 CA_Regions <- Data %>% 
   filter(!CA %in% c("S92000003")) %>%
@@ -336,13 +324,13 @@ class: inverse, center, middle
 # Crude Mortality by Chart of two variables
 
 ---
+class: center, middle
 
 .pull-left[
 
-# Agegroup and Diagnosis
+<span style="font-size: 1.4em; font-weight: bold;"> Agegroup and Diagnosis </span>
 
---
-```{r out.width= "100%", fig.align="center", echo = FALSE, message=FALSE, warning=FALSE}
+```{r out.width= "130%", fig.align="center", echo = FALSE, message=FALSE, warning=FALSE}
 table_1<- Data %>%
   group_by(AgeGroup,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
@@ -356,16 +344,20 @@ ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
     x = "Heart-disease type",
     y = "Mean crude rate",
     fill = "AgeGroup"
+  )+
+  theme(
+    plot.margin = unit(c(0, 0, 0, 0), "cm"), 
   )
 ```
 ]
 
 
 .pull-right[
-# Sex and Diagnosis
 
---
-```{r out.width= "100%", fig.align="center", echo = FALSE, message=FALSE}
+
+<span style="font-size: 1.4em; font-weight: bold;"> Sex and Diagnosis </span>
+
+```{r out.width= "130%", fig.align="center", echo = FALSE, message=FALSE}
 Table_2<-Data %>%
   group_by(Sex,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
@@ -377,6 +369,9 @@ ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
     x = "Heart-disease type",
     y = "Mean crude rate",
     fill = "Sex"
+  )+
+  theme(
+    plot.margin = unit(c(0, 0, 0, 0), "cm"), 
   )
 ```
 ]
@@ -395,12 +390,13 @@ class: inverse, center, middle
 
 ---
 
-# linear regression model
+# Set up
 
 --
-```{r out.width= "75%", fig.align="center", echo = FALSE,  warning=FALSE, message=FALSE}
-Data<-Data%>% 
-  filter(!Sex %in% c("All"))%>%
+```{r out.width= "75%", fig.align="center", echo = FALSE}
+
+Data<-Data%>%
+  filter(!Sex %in% c("All"))%>% 
   filter(!AgeGroup %in% c("All"))
   
 Data <- Data %>%
@@ -412,7 +408,6 @@ Data <- Data %>%
       )
   )
 
-
 Data$split_AgeGroup<-relevel(factor(Data$split_AgeGroup),ref="under75 years")
 Data$Diagnosis<-relevel(factor(Data$Diagnosis),ref="Heart Failure")
 Data$Sex<-relevel(factor(Data$Sex),ref="Females")
@@ -420,51 +415,98 @@ Data$Sex<-relevel(factor(Data$Sex),ref="Females")
 
 ht_yc_fit_1 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(log(CrudeRate+1) ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+  fit(CrudeRate ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
 tidy(ht_yc_fit_1)
+```
 
+
+--
+- Year < Is Male < Is Heart Attack < Is Coronary Heart Disease < Is Age 75+
+
+---
+# Residual plot 
+
+```{r out.width= "45%", fig.align="center", echo = FALSE}
 ht_yc_fit_aug_1 <- augment(ht_yc_fit_1$fit)
 ggplot(ht_yc_fit_aug_1, mapping = aes(x = .fitted, y = .resid)) +
   geom_point(alpha = 0.5) +
   geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
-  labs(x = "Predicted CrudeRate", y = "Residuals")
+  labs(x = "Predicted CrudeRate", y = "Residuals")+
+  theme(
+    plot.margin = unit(c(0, 0, 0, 0), "cm"), 
+  )
+```
 
-glance(ht_yc_fit_1)$adj.r.squared
+--
+- Clustered residuals with a large empty gap  
+Most groups have low crude mortality rates；Only specific groups (e.g., 75+ or certain diagnoses) have very high mortality. Hence,this creates natural gaps in the distribution, independent of the mode  
 
-ht_yc_fit_3 <- linear_reg() %>%
+--
+- Fan-shaped pattern  
+i. Missing important predictors  
+ii. Non-linear relationships that the linear model cannot capture  
+iii. The limitations of simple transformations  
+
+---
+# log ( CrudeRate + 1 )
+
+```{r echo = FALSE, results='hide'}
+ht_yc_fit_2 <- linear_reg() %>%
   set_engine("lm") %>%
-  fit(CrudeRate ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
-tidy(ht_yc_fit_3)
+  fit(log(CrudeRate + 1) ~ Year+split_AgeGroup+Sex+Diagnosis ,data = Data)
+tidy(ht_yc_fit_2)
+```
 
-ht_yc_fit_aug_3 <- augment(ht_yc_fit_3$fit)
-ggplot(ht_yc_fit_aug_3, mapping = aes(x = .fitted, y = .resid)) +
+```{r out.width= "75%", fig.align="center", echo = FALSE}
+ht_yc_fit_aug_2 <- augment(ht_yc_fit_2$fit)
+ggplot(ht_yc_fit_aug_2, mapping = aes(x = .fitted, y = .resid)) +
   geom_point(alpha = 0.5) +
   geom_hline(yintercept = 0, color = "gray", lty = "dashed") +
   labs(x = "Predicted CrudeRate", y = "Residuals")
+```
 
-glance(ht_yc_fit_3)$adj.r.squared
 
+---
 
-ht_yc_fit_2 <- linear_reg() %>%
+class: inverse, center, middle
+
+# Adjusted R²
+
+---
+# Scatter Plot: CrudeRate vs Year
+
+```{r echo = FALSE, results='hide'}
+ht_yc_fit_3 <- linear_reg() %>%
   set_engine("lm") %>%
   fit(CrudeRate ~ Year,data = Data)
-tidy(ht_yc_fit_2)
+tidy(ht_yc_fit_3)
+```
 
-ht_yc_fit_aug_2 <- augment(ht_yc_fit_2$fit)
 
-ggplot(data=ht_yc_fit_aug_2 ,aes(x=Year,y=CrudeRate))+
+```{r out.width= "75%", fig.align="center", echo = FALSE}
+ht_yc_fit_aug_3 <- augment(ht_yc_fit_3$fit)
+
+ggplot(data=ht_yc_fit_aug_3 ,aes(x=Year,y=CrudeRate))+
   geom_point(alpha=0.25)+
   geom_line(aes(x = Year, y = .fitted), linewidth = 0.75)+
   geom_point(mapping = aes(x = Year,y = .fitted), color = "#E48957")+
   geom_segment(mapping = aes(x = Year, y = CrudeRate,
                              xend = Year, yend = .fitted), color = "#E48957", alpha = 0.4)+
-  labs(title = "Year vs CrudeRate",
-    x = "Year",
+  labs(x = "Year",
     y = "Cruderate"
-  ) 
-
+  )
 ```
 
+---
+# Brief summary
+
+Although the linear regression model has limitations, it successfully identifies three key factors that may influence heart disease mortality:  
+
+i. Age group (especially 75+)  
+
+ii. Sex (male)  
+
+iii. Diagnosis type (Coronary Heart Disease, Heart Attack)  
 
 ---
 
@@ -477,22 +519,25 @@ class: inverse, center, middle
 # Logistic regression model
 
 --
-Aim:  
+<span style="font-size: 1.4em; font-weight: bold;"> Aim: </span>
+
+- To develop and evaluate a logistic regression model that predicts high/low crude-rate risk from age group, sex and diagnosis.  
+
 
 --
-Data:  
+<span style="font-size: 1.4em; font-weight: bold;"> Data: </span>
+
+- X = Age + Sex + Diagnosis  
+
+- Y= Rate -> 0,1 because aim to classify high/low risk  
+
+- train / test data set (randomly 80% / 0.2%)  
+
 
 --
-i. X = Age + Sex + Diagnosis  
+<span style="font-size: 1.4em; font-weight: bold;"> Model: </span>
 
---
-ii. Y= Rate -> 0,1 because aim to classify high/low risk  
-
---
-iii. train / test data set (randomly 80% / 0.2%)  
-
---
-Model: R,GLM -> model train and model test  
+- GLM (Generalized Linear Model) -> model train and model test  
 
 ---
 
@@ -543,6 +588,12 @@ CrudeRate_pred %>%
 #Sensitivity and specificity
 
 --
+.pull-left[
+<span style="font-size: 1.4em; font-weight: bold;">  cutoff = 0.25 </span>
+- Sensitivity = 30 / ( 30 + 32 ) ≈ 0.4839
+- Specificity = 534 / ( 534 + 20 ) ≈ 0.9640  
+]
+.pull-right[
 ```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
 cutoff_prob <- 0.25
 CrudeRate_pred %>%
@@ -554,7 +605,16 @@ CrudeRate_pred %>%
   pivot_wider(names_from = rate_group, values_from = n) %>%
   kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
 ```
+]
 
+
+--
+.pull-left[
+<span style="font-size: 1.4em; font-weight: bold;">  cutoff = 0.5 </span>
+- Sensitivity = 24 / ( 24 + 13 ) ≈ 0.6486
+- Specificity = 553 / ( 553 + 26 ) ≈ 0.9551  
+]
+.pull-right[
 ```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
 cutoff_prob<-0.5
 CrudeRate_pred %>%
@@ -566,7 +626,15 @@ CrudeRate_pred %>%
   pivot_wider(names_from = rate_group, values_from = n) %>%
   kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
 ```
+]
 
+--
+.pull-left[
+<span style="font-size: 1.4em; font-weight: bold;"> cutoff = 0.75 </span>
+- Sensitivity = NA
+- Specificity = 566 / ( 566 + 41 ) ≈ 0.9324
+]
+.pull-right[
 ```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
 cutoff_prob<-0.75
 CrudeRate_pred %>%
@@ -579,140 +647,48 @@ CrudeRate_pred %>%
   kable(col.names = c(" ","high_CrudeRate","low_CrudeRate"))
 
 ```
-
-
----
-
-# Summary of Model 2
-
---
-
-
-
----
-
-# Layouts
-
-You can use plain text
-
-- or bullet points
-
-.pull-left[
-or text in two columns $^*$
-]
-.pull-right[
-- like
-- this
-]
-
-.footnote[
-[*] And add footnotes
 ]
 
 ---
-
-# Code
-
-```{r boring-regression}
-# a boring regression
-model <- lm(dist ~ speed, data = cars)
-tidy(model)
-glance(model)
-```
-
----
-
-# Plots
-
-```{r recode-species, echo = FALSE}
-# In this chunk I'm doing a bunch of analysis that I don't want to present 
-# in my slides. But I need the resulting data frame for a plot I want to present.
-iris_modified <- iris %>%
-  mutate(Species = fct_other(Species, keep = "setosa"))
-```
-
-```{r plot-iris, echo = FALSE}
-# Code hidden with echo = FALSE
-# Uses modified iris dataset from previous chunk
-# Play around with height and width until you're happy with the look
-ggplot(data = iris_modified, mapping = aes(x = Sepal.Width, y = Sepal.Length, color = Species)) +
-  geom_point() + 
-  theme_minimal() # theme options: https://ggplot2.tidyverse.org/reference/ggtheme.htmlc
-```
-
----
-
-## Plot and text
-
-.pull-left[
-- Some text
-- goes here
-]
-.pull-right[
-```{r warning=FALSE, out.width="100%", fig.width=4, echo=FALSE}
-# see how I changed out.width and fig.width from defaults
-# to make the figure bigger
-ggplot(penguins, aes(x = bill_length_mm, y = species, color = species)) +
-  geom_boxplot() +
-  theme_minimal()
-```
-]
-
----
-
-# Tables
-
-If you want to generate a table, make sure it is in the HTML format (instead of Markdown or other formats), e.g.,
-
-```{r iris-table, echo = FALSE}
-kable(head(iris), format = "html")
-```
-
----
-
-# Images
-
-```{r castle, echo = FALSE, out.width = "55%", fig.align = "center", fig.cap = "Image credit: Photo by Jörg Angeli on Unsplash."}
-include_graphics("img/edinburgh-castle.jpg")
-```
-
-Or you can also include a full page image. See next slide.
-
----
-
 
 class: inverse, center, middle
-background-image: url(img/edinburgh-castle.jpg)
-background-size: contain
----
 
-# Math Expressions
-
-You can write LaTeX math expressions inside a pair of dollar signs, e.g. &#36;\alpha+\beta$ renders $\alpha+\beta$. You can use the display style with double dollar signs:
-
-```
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-```
-
-$$\bar{X}=\frac{1}{n}\sum_{i=1}^nX_i$$
-
-Limitations:
-
-1. The source code of a LaTeX math expression must be in one line, unless it is inside a pair of double dollar signs, in which case the starting `$$` must appear in the very beginning of a line, followed immediately by a non-space character, and the ending `$$` must be at the end of a line, led by a non-space character;
-
-1. There should not be spaces after the opening `$` or before the closing `$`.
-
-1. Math does not work on the title slide (see [#61](https://github.com/yihui/xaringan/issues/61) for a workaround).
+# Conclusion
 
 ---
 
-# Feeling adventurous?
+# Biases:
 
-- Want to find out more about `xaringan`? See https://slides.yihui.name/xaringan/#1.
+<span style="font-size: 1.4em; font-weight: bold;"> Gender: </span>
+Heart disease may be influenced by behaviors such as smoking rate and alcohol consumption.
+The model may attribute these hidden effects to gender itself, thus exaggerating gender differences.
 
-- You are welcome to use the default styling of the slides. In fact, that's what I expect majority of you will do. You will differentiate yourself with the content of your presentation.
+<span style="font-size: 1.4em; font-weight: bold;"> Time: </span>
+Certain infectious diseases in some years, such as COVID-19, may also cause abnormal mortality rates.
 
-- But some of you might want to play around with slide styling. The 
-`xaringanthemer` provides some solutions for this that: https://pkg.garrickadenbuie.com/xaringanthemer.
+<span style="font-size: 1.4em; font-weight: bold;"> Dataset selection: </span>
+A single dataset may be affected by multiple factors (such as collection methods), leading to unrealistic results
 
-- And if you want more bells and whistles, there is also `xaringanExtra`: https://pkg.garrickadenbuie.com/xaringanExtra.
+(for example: many regions have a mortality rate of 0).
+
+---
+<span style="font-size: 1.4em; font-weight: bold;"> Limitations: </span>
+
+Insufficient explanatory variables:  
+The data lacks important factors such as health behaviors, lifestyle, and economic conditions,which makes the model unable to properly explain the differences in mortality rate.
+
+The threshold for risk classification may affect results:  
+Different thresholds may produce different conclusions.
+
+Structural gaps in the data itself:   
+The distribution between high-mortality and low-mortality groups is very unbalanced,causing clustering patterns in the residual plot
+
+<span style="font-size: 1.4em; font-weight: bold;"> Future Improvements: </span>
+
+Data selection:
+- Add more explanatory variables (such as regional economic level, disease behavior risk, hospital resources)
+- Expand the sample range (e.g.include longer time span)
+Data processing:
+-	linear regression model--Try more complex transformations
+-	Logistic regression model--Optimize the high/low risk classification method (e.g.quartile)
+-	Control the influence of external events (e.g., stratify by COVID years before analysis)
