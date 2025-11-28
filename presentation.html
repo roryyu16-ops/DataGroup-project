@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Artery Party   Roderick Yu, Yufei Xiang, Hoddy Zhu, Lincoln Luk" />
     <meta name="date" content="2025-11-28" />
-    <script src="libs/header-attrs-2.30/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.29/header-attrs.js"></script>
     <script src="libs/kePrint-0.0.1/kePrint.js"></script>
     <link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
@@ -361,7 +361,7 @@ class: inverse, center, middle
 
 - Y= Rate -&gt; 0,1 because aim to classify high/low risk  
 
-- train / test data set (randomly 80% / 0.2%)  
+- train / test data set (randomly 80% / 20%)  
 
 
 --
@@ -375,6 +375,15 @@ class: inverse, center, middle
 
 --
 &lt;img src="presentation_files/figure-html/unnamed-chunk-19-1.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+```
+## # A tibble: 1 × 3
+##   .metric .estimator .estimate
+##   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+## 1 roc_auc binary         0.842
+```
+---
+#AUC
 
 ```
 ## # A tibble: 1 × 3

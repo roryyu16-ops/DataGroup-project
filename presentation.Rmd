@@ -531,7 +531,7 @@ class: inverse, center, middle
 
 - Y= Rate -> 0,1 because aim to classify high/low risk  
 
-- train / test data set (randomly 80% / 0.2%)  
+- train / test data set (randomly 80% / 20%)  
 
 
 --
@@ -581,6 +581,16 @@ CrudeRate_pred %>%
     event_level = "second"
   )
 
+```
+---
+#AUC
+```{r echo = FALSE}
+CrudeRate_pred %>%
+  roc_auc(
+    truth = rate_group,
+    .pred_1,
+    event_level = "second"
+  )
 ```
 
 
