@@ -41,7 +41,7 @@ knitr::opts_chunk$set(fig.retina = 3, dpi = 300, fig.width = 6, fig.asp = 0.618,
 # load your data 
 MArea <- read_csv("data/HDM_CouncilArea.csv")
 Data<- MArea %>%
-  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR,NumberOfDeaths) %>%
+  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR) %>%
   drop_na()
 
 ```
@@ -298,7 +298,6 @@ CA_Regions <- Data %>%
 CA_summary <- CA_Regions %>%
   group_by(Region) %>%
   summarise(
-    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
     mean_rate  = mean(CrudeRate, na.rm = TRUE)
   )
 ```
@@ -380,13 +379,13 @@ ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
 
 class: inverse, center, middle
 
-# model building
+# Model building
 
 ---
 
 class: inverse, center, middle
 
-# linear regression model
+# Linear regression model
 
 ---
 
@@ -471,6 +470,15 @@ ggplot(ht_yc_fit_aug_2, mapping = aes(x = .fitted, y = .resid)) +
 class: inverse, center, middle
 
 # Adjusted R²
+
+
+---
+
+---
+#Adjusted R²
+```{r echo = FALSE}
+glance(ht_yc_fit_1)$adj.r.squared
+```
 
 ---
 # Scatter Plot: CrudeRate vs Year

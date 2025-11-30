@@ -27,7 +27,7 @@ CouncilArea <- read_csv("data/CouncilArea.csv")
 
 
 Data<- MArea %>%
-  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR,NumberOfDeaths) %>%
+  select(Year,CA,AgeGroup,Sex,Diagnosis,CrudeRate,EASR) %>%
   drop_na()
 
 
@@ -141,7 +141,6 @@ CA_Regions <- Data %>%
 CA_summary <- CA_Regions %>%
   group_by(Region) %>%
   summarise(
-    mean_deaths = mean(NumberOfDeaths, na.rm = TRUE),
     mean_rate  = mean(CrudeRate, na.rm = TRUE)
   )
 
@@ -164,7 +163,8 @@ Then, to visualise the how the crude rate differs between sex, we made a bar cha
 
 ```{r, echo = FALSE, warning= FALSE}
 # Bar chart of Sex
-table_sex<-Data %>%
+table_sex<-Data %>% 
+  filter(!Sex %in% c("All"))%>%
   group_by(Sex) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))
@@ -174,7 +174,7 @@ ggplot(table_sex)+
                      y=mean_cruderate,
                      fill=Sex),
                      stat = "identity")+
-  labs(title = "The mean value of cruderate for different Sexes",
+  labs(title = "The mean value of cruderate for different Sexs",
        x="Sex",
        y="Mean Cruderate",
        fill="Sex")
@@ -194,9 +194,9 @@ We then investigated the different age groups differed in crude rate.
 ```{r, echo = FALSE, warning= FALSE}
 #Bar chart of Age
 table_age<-Data %>%
+  filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))%>%
   mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
 
 ggplot(table_age)+
@@ -246,8 +246,7 @@ Finally, for the single variables, we looked at the diagnoses and how crude rate
 # Bar chart of Diagnosis
 table_Diagnosis<-Data %>%
   group_by(Diagnosis) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
 ggplot(table_Diagnosis)+
        geom_bar(mapping= aes (x=Diagnosis,
@@ -275,19 +274,20 @@ After investigating each variable individually against the mean crude rate, we f
 We 
 ```{r, echo = FALSE, message= FALSE}
 #Table 7(Age and Year)
-Table_5 <- Data %>%
-  group_by(AgeGroup,Year) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE)) 
-ggplot(Table_5, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
-  geom_line(size = 1) +
-  geom_point() +
-  labs(
-    title = "Mean crude rate by AgeGroup over Years",
-    x = "Year",
-    y = "Mean crude rate"
-  ) +
-  theme_minimal()
+ Table_5<-Data %>%
+    group_by(AgeGroup,Year) %>%
+    filter(!AgeGroup %in% c("All"))%>%
+    summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
+              median_cruderate = median(CrudeRate , na.rm = TRUE)) 
+  ggplot(Table_5, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
+    geom_line(size = 1) +
+    geom_point() +
+    labs(
+      title = "Mean crude rate by AgeGroup over Years",
+      x = "Year",
+      y = "Mean crude rate"
+    ) +
+    theme_minimal()
 ```
 
 We then plotted year against crude rate
@@ -315,6 +315,7 @@ ggplot(summary_diagnosis,aes(x = Year, y = mean_cruderate, color = Diagnosis, gr
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 #Table 9 (Agegroup and Diagnosis)
 table_1<- Data %>%
+  filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
@@ -337,6 +338,7 @@ ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
 ```{r, echo = FALSE, message= FALSE}
 #Table 10 (Sex and Diagnosis)
 Table_2<-Data %>%
+  filter(!Sex %in% c("All"))%>%
   group_by(Sex,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
             median_cruderate = median(CrudeRate , na.rm = TRUE))
