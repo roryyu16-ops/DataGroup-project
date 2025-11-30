@@ -584,6 +584,8 @@ CrudeRate_pred %>%
 ```
 ---
 #AUC
+
+--
 ```{r echo = FALSE}
 CrudeRate_pred %>%
   roc_auc(
@@ -600,8 +602,8 @@ CrudeRate_pred %>%
 --
 .pull-left[
 <span style="font-size: 1.4em; font-weight: bold;">  cutoff = 0.25 </span>
-- Sensitivity = 30 / ( 30 + 32 ) ≈ 0.4839
-- Specificity = 534 / ( 534 + 20 ) ≈ 0.9640  
+- Sensitivity = 30 / ( 30 + 20 ) ≈ 0.60
+- Specificity = 534 / ( 534 + 32 ) ≈ 0.943   
 ]
 .pull-right[
 ```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
@@ -621,8 +623,8 @@ CrudeRate_pred %>%
 --
 .pull-left[
 <span style="font-size: 1.4em; font-weight: bold;">  cutoff = 0.5 </span>
-- Sensitivity = 24 / ( 24 + 13 ) ≈ 0.6486
-- Specificity = 553 / ( 553 + 26 ) ≈ 0.9551  
+- Sensitivity = 24 / ( 24 + 26 ) ≈ 0.48
+- Specificity = 553 / ( 553 + 26 ) ≈ 0.977  
 ]
 .pull-right[
 ```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
@@ -641,8 +643,8 @@ CrudeRate_pred %>%
 --
 .pull-left[
 <span style="font-size: 1.4em; font-weight: bold;"> cutoff = 0.75 </span>
-- Sensitivity = NA
-- Specificity = 566 / ( 566 + 41 ) ≈ 0.9324
+- Sensitivity = 9 / ( 9 + 41 ) ≈ 0.18
+- Specificity = NA
 ]
 .pull-right[
 ```{r out.width= "75%", fig.align="center", echo = FALSE, message=FALSE}
