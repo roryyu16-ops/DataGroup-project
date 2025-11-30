@@ -213,8 +213,7 @@ ggplot(table_sex)+
 table_age<-Data %>%
   filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))%>%
-  mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
 ggplot(table_age)+
        geom_bar(mapping= aes (x=AgeGroup,
@@ -328,9 +327,9 @@ class: center, middle
 
 ```{r out.width= "130%", fig.align="center", echo = FALSE, message=FALSE, warning=FALSE}
 table_1<- Data %>%
+  filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup,Diagnosis) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))%>%
-  mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
 ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
   geom_col(position = position_dodge(width = 0.8)) +
@@ -354,6 +353,7 @@ ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
 
 ```{r out.width= "130%", fig.align="center", echo = FALSE, message=FALSE}
 Table_2<-Data %>%
+  filter(!Sex %in% c("All"))%>%
   group_by(Sex,Diagnosis) %>%
   summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
