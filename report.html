@@ -945,11 +945,10 @@ independent of the model</p>
 <h4>2. Fan-shaped pattern</h4>
 <p>The residuals spread out more widely as the predicted value
 increases, forming a fan shape.</p>
-<p>Possible reasons include: - Missing important predictors (e.g.,
-regional differences, socioeconomic factors) - Non-linear relationships
-that the linear model cannot capture - The limitations of simple
-transformations - Even after trying log(CrudeRate + 1), the distribution
-did not improve</p>
+<p>Possible reasons include: - Missing important predictors
+(e.g.socioeconomic factors) - Non-linear relationships that the linear
+model cannot capture - The limitations of simple transformations - Even
+after trying log(CrudeRate + 1), the distribution did not improve</p>
 <p>This suggests that the linearity assumption may not fully hold.</p>
 <pre class="r"><code>ht_yc_fit_2 &lt;- linear_reg() %&gt;%
   set_engine(&quot;lm&quot;) %&gt;%
@@ -1018,7 +1017,7 @@ socioeconomic indicators)</p></li>
 <li><p>Use a larger dataset such as all regions of the UK to test
 whether the observed patterns remain consistent</p></li>
 <li><p>Consider exploring non-linear models or classification models
-(e.g., logistic regression) for further insights</p></li>
+(e.g.logistic regression) for further insights</p></li>
 </ol>
 </div>
 </div>

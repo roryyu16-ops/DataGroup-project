@@ -190,8 +190,7 @@ ggplot(data = Data,
 table_sex<-Data %>% 
   filter(!Sex %in% c("All"))%>%
   group_by(Sex) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
 ggplot(table_sex)+
        geom_bar(mapping= aes (x=Sex,
@@ -214,8 +213,7 @@ ggplot(table_sex)+
 table_age<-Data %>%
   filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))%>%
   mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
 
 ggplot(table_age)+
@@ -238,8 +236,7 @@ ggplot(table_age)+
 ```{r out.width= "75%", fig.align="center",fig.width=7, echo = FALSE, warning=FALSE, message=FALSE}
 table_Diagnosis<-Data %>%
   group_by(Diagnosis) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
 ggplot(table_Diagnosis)+
        geom_bar(mapping= aes (x=Diagnosis,
@@ -332,8 +329,7 @@ class: center, middle
 ```{r out.width= "130%", fig.align="center", echo = FALSE, message=FALSE, warning=FALSE}
 table_1<- Data %>%
   group_by(AgeGroup,Diagnosis) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))%>%
   mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
 
 ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
@@ -359,8 +355,7 @@ ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
 ```{r out.width= "130%", fig.align="center", echo = FALSE, message=FALSE}
 Table_2<-Data %>%
   group_by(Sex,Diagnosis) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
   geom_col(position = position_dodge(width = 0.8)) +
   labs(

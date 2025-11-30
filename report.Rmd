@@ -166,8 +166,7 @@ Then, to visualise the how the crude rate differs between sex, we made a bar cha
 table_sex<-Data %>% 
   filter(!Sex %in% c("All"))%>%
   group_by(Sex) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 
 ggplot(table_sex)+
        geom_bar(mapping= aes (x=Sex,
@@ -277,8 +276,7 @@ We
  Table_5<-Data %>%
     group_by(AgeGroup,Year) %>%
     filter(!AgeGroup %in% c("All"))%>%
-    summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-              median_cruderate = median(CrudeRate , na.rm = TRUE)) 
+    summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE)) 
   ggplot(Table_5, aes(x = Year, y = mean_cruderate, color =AgeGroup , group = AgeGroup)) +
     geom_line(size = 1) +
     geom_point() +
@@ -317,8 +315,7 @@ ggplot(summary_diagnosis,aes(x = Year, y = mean_cruderate, color = Diagnosis, gr
 table_1<- Data %>%
   filter(!AgeGroup %in% c("All"))%>%
   group_by(AgeGroup,Diagnosis) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))%>%
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))%>%
   mutate(AgeGroup = fct_relevel(AgeGroup, "All" ,after = 0))
 
 ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
@@ -340,8 +337,7 @@ ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
 Table_2<-Data %>%
   filter(!Sex %in% c("All"))%>%
   group_by(Sex,Diagnosis) %>%
-  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE),
-            median_cruderate = median(CrudeRate , na.rm = TRUE))
+  summarise(mean_cruderate = mean(CrudeRate , na.rm = TRUE))
 ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
   geom_col(position = position_dodge(width = 0.8)) +
   labs(
@@ -444,7 +440,7 @@ Most groups have low crude mortality rates；Only specific groups (e.g., 75+ or 
 The residuals spread out more widely as the predicted value increases, forming a fan shape.
 
 Possible reasons include:
-- Missing important predictors (e.g., regional differences, socioeconomic factors)
+- Missing important predictors (e.g.socioeconomic factors)
 - Non-linear relationships that the linear model cannot capture
 - The limitations of simple transformations
     - Even after trying log(CrudeRate + 1), the distribution did not improve
@@ -524,7 +520,7 @@ Although the linear regression model has limitations, it successfully identifies
 
 2. Use a larger dataset such as all regions of the UK to test whether the observed patterns remain consistent
 
-3. Consider exploring non-linear models or classification models (e.g., logistic regression) for further insights
+3. Consider exploring non-linear models or classification models (e.g.logistic regression) for further insights
 
 
 ## logistic regression model
