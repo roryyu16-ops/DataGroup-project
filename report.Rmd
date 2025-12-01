@@ -36,18 +36,13 @@ Data<- MArea %>%
 
 ## Research Question
 
-Our main research question is to explore the differences in heart disease mortality in Scotland, and to identify how mortality rates vary across different demographic categories, such as gender, geographical area, age group, and year. The goal is to identify any long-term patterns or to determine whether certain groups consistently exhibit higher mortality rates than others. We also aim to provide risk predictions for the population of Scotland through the use of modelling. 
+Our main research question is to explore how heart disease mortality varies across Scotland and across demographic categories such as gender, geographical area, age group, and year. The aim is to identify long-term patterns and determine whether certain groups consistently show higher mortality. We also use modelling to generate risk predictions for the Scottish population.
 
-This particular dataset interested our group as heart diseases can affect anyone and is also known as one of the main causes of death globally. We all have a risk of getting heart disease and it was interesting to us to find what group of people are most at risk. 
+This dataset interested us because heart disease could affect anyone and is a leading cause of death, making it important to understand which groups are most at risk.
 
 ## Data Overview
 
-We are using the 'Heart Disease Mortality by Council Area' dataset from the Scottish Heart Disease Statistics from the Public Health Scotland NHS website, which we named "MArea". 
-
-This dataset consists of 17820 rows and 14 variables (columns). 
-
-Our focus was on the different demographic and geographic categories, so from the start we cleaned up the data from "MArea" into "Data" where there are 7230 rows and 7 variables (columns):
-
+We used the Heart Disease Mortality by Council Area dataset from Public Health Scotland. The raw dataset contains 17,820 observations and 14 variables. To focus on demographic and mortality-related information, we selected seven key variables, resulting in a cleaned dataset of 7,230 observations.
 
 ```{r, echo = FALSE}
 overview <- tribble(
@@ -65,8 +60,6 @@ overview %>%
   kable(head(overview), format = ("html")) %>% 
   kable_styling(full_width = FALSE, position = "left")
 ```
-
-Additionally to support our research aim, we made additional variables to categorise our data better and so we could analyse and evaluate the data more easily. The additional variables will be mentioned in the findings.
 
 ## Exploratory Statistics
 
@@ -89,14 +82,13 @@ Data %>%
               median_cruderate = median(CrudeRate , na.rm = TRUE)) 
 ```
 
-These summary statistics show us that age is the most dominant factor in which the we can see the biggest difference in crude rates, both in mean and median. This is also confirmed from comparing the two sections All and under 75 years, where the rates for under 75 years are significantly lower.
+These summary statistics show that age is the strongest factor, with the largest differences in mean and median crude rates. Rates for those under 75 are much lower than for older groups.
 
-The difference between sexes is also quite clear, with men have a noticeably higher rate than women. Across the three diagnoses, coronary heart disease has the highest rates, followed by heart attacks , while heart failure has the lowest rates.
-
+Sex differences are also clear: men have noticeably higher mortality rates than women. Among diagnoses, coronary heart disease has the highest rates, followed by heart attacks, with heart failure lowest.
 
 ## Data Visualisations
 
-To understand more about this dataset, we tried to find more patterns by making visualisations
+To understand more about this dataset, we tried to find more patterns by making visualisations.
 
 ### 1. EASR
 
@@ -113,13 +105,12 @@ ggplot(data = Data,
   geom_smooth(method = lm , se = FALSE)
 ```
 
-We used the EASR and plotted it against crude rate to see how reliable and it was and we plotted a line of best fit, which had a gradient of 1. This shows that crude rate is very reliable and we can confidently use it to compare evaluate the data, as their correlation is near perfect. Therefore we used the crude rate instead of EASR for the rest of the investigation.
+The EASR–crude rate plot shows a near-perfect correlation (gradient 1), confirming that crude rate is reliable and suitable for the rest of the analysis.
 
 
 ### 2. Geographical area
 
 To start off, we tried to find if there were differences in mortality rate for each region of Scotland.
-We looked at the dataset CouncilArea from CouncilArea.csv and we manually matched each area with the council area codes in MArea (the original dataset) to each region (North, Central, South, etc.)
 
 ```{r, echo = FALSE, warning= FALSE}
 #Chart of Area
@@ -154,12 +145,11 @@ CA_summary <- CA_Regions %>%
   )
 ```
 
-We found that there was not much variation across the regions except for the North-east, where rates are relatively around 5% higher than the other regions. We concluded that there is no trend between geographical location and crude rate for heart diseases, and we decided that this is not something we had to keep looking into. This could also mean that the risk factors such as oil intake or physical activity are quite similar throughout each region. So we decided to investigate the other factors in this dataset.
-
+After assigning each council area to a region, we compared mean crude rates across regions. Mortality levels were largely similar across Scotland, with the North-East showing only a small increase (around 5%). Since these differences were minimal, geographical region was not considered an important factor and was excluded from modelling.
 
 ### 3. Sex 
 
-Then, to visualise the how the crude rate differs between sex, we made a bar chart with the mean value of crude rates across all men and women. 
+Then, we made a bar chart with the mean value of crude rates across all men and women. 
 
 ```{r, echo = FALSE, warning= FALSE}
 # Bar chart of Sex
@@ -179,12 +169,7 @@ ggplot(table_sex)+
        fill="Sex")
 ```
 
-We found that men have a significantly higher mean crude rate than women, almost double. This shows that men are more twice as likely to die from heart diseases than women This may be caused by eating habits, physical activity, or even biological reasons. We figured this was worth looking into.
-
-Significant gender differences:
-The average CrudeRate of men (47.9) is 72% higher than that of women (27.8), but the median for both is 0, indicating that most individuals have no events, but men have more extreme high-risk cases.
-The global median (1.95) falls between men and women, indicating that the dataset may contain mixed gender ratios.
-
+A bar chart comparing male and female mortality showed that men have nearly double the crude rate of women, making sex an influential variable. This aligns with biological and lifestyle-based explanations consistently found in cardiovascular research.
 
 ### 4. Age
 
@@ -208,9 +193,7 @@ ggplot(table_age)+
        fill="AgeGroup")
 ```
 
-The clear takeaway form this visualisation is 75 plus year olds have the highest mean crude rate. This tells us that this group of people (aged 75 plus) are most likely to suffer from heart disease.
-
-Howeverm the mean and median of "all ages" are close (72.8 vs 72.3) and relatively lower, but after splitting, it can be seen that using global statistics will ignore high-risk elderly groups.
+Age differences were clear: the 75+ group had dramatically higher crude rates than all younger groups. This confirms age as the dominant factor in heart disease mortality.
 
 
 ### 5. Year
@@ -234,7 +217,7 @@ ggplot(summary_diagnosis, aes(x = Year, y = mean_cruderate)) +
   theme_minimal()
 ```
 
-We found that the mean crude rate falls throughout the years until 2019, where it increases at a faster rate. This does not tell us much about if the year has any correlation with crude rate, but it shows how it has changed over the years and we could use it to compare with other variables. 
+Crude rates declined gradually and then rose again toward 2019. However, the pattern does not indicate a strong linear trend, suggesting that year alone is not a meaningful predictor of mortality.
 
 ### 6. Diagnosis
 
@@ -259,17 +242,12 @@ ggplot(table_Diagnosis)+
 
 This visualisation does not tell us much, but we can clearly see the distribution of deaths among the three diagnoses, with coronary heart diseases with the highest rate, followed by heart attacks, and heart failure with the lowest rate. 
 
-
-Coronary heart disease: The mean and median values are close (116.0 vs 112.0), indicating a relatively symmetrical data distribution, stable risk, and generally high risk.
-Heart failure: The mean (2.32) is much higher than the median (0), indicating that the vast majority of cases have no events, but there are a small number of individuals with extremely high risk.
-
-
-
 ### 7. Combining variables 
 
-After investigating each variable individually against the mean crude rate, we figured that each variable did not tell us much on its own. This led us into combining variables together, comparing two variables together with crude rate.
+After investigating each variable individually against the mean crude rate, we figured that each variable did not tell us much on its own. So, we combined variables together, comparing two variables together with crude rate.
 
-We 
+We first compared year with age and diagnosis.
+
 ```{r, echo = FALSE, message= FALSE}
 #Table 7(Age and Year)
  Table_5<-Data %>%
@@ -286,8 +264,6 @@ We
     ) +
     theme_minimal()
 ```
-
-We then plotted year against crude rate
 
 ```{r, echo = FALSE, message= FALSE}
 #Table 8(Diagnosis and year)
@@ -306,8 +282,10 @@ ggplot(summary_diagnosis,aes(x = Year, y = mean_cruderate, color = Diagnosis, gr
   theme_minimal()
 ```
 
+The overall shape changed compared to the original year curve, showing there is variation between these factors. We decided to use modelling to further determine year's significance in our investigation.
 
 
+We then compared diagnosis with age and sex.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 #Table 9 (Agegroup and Diagnosis)
@@ -326,10 +304,6 @@ ggplot(table_1, aes(x = Diagnosis, y = mean_cruderate, fill = AgeGroup)) +
   )
 ```
 
-
-
-
-
 ```{r, echo = FALSE, message= FALSE}
 #Table 10 (Sex and Diagnosis)
 Table_2<-Data %>%
@@ -346,29 +320,22 @@ ggplot(Table_2, aes(x = Diagnosis, y = mean_cruderate, fill = Sex)) +
   )
 ```
 
+To understand interactions between variables, we visualised combinations such as age x year and diagnosis x sex. These combined plots were consistent with the earlier findings, confirming that age, sex, and diagnosis meaningfully influence mortality, while year contributes little.
 
-
-Going through all these visualisations and the exploratory statistics, we concluded that men aged over 75 are most likely to suffer from heart disease and that year
-
-
-
-
-
-
-
+This gave confidence in selecting variables for modelling.
 
 ## Predictive Modelling
 
 ### Data Processing
 
-After removing all observations labeled as “ALL” in the Sex and AgeGroup variables, the dataset contains 3068 valid records.
+After excluding aggregated categories such as “All” in age and sex, 3068 valid observations remained for modelling. Age was grouped into two categories (“Under 75” and “75+”) to simplify interpretation and stabilise model estimates. Reference levels were set for age, sex, and diagnosis to allow meaningful comparisons.
 
-We excluded these categories because they represent aggregated totals and could distort the accuracy of the model by mixing population groups with very different characteristics.
 ```{r}
 Data<-Data%>% 
   filter(!Sex %in% c("All"))%>%
   filter(!AgeGroup %in% c("All"))
 ```
+
 Grouping
 
 ```{r}
@@ -388,6 +355,7 @@ Data$Sex<-relevel(factor(Data$Sex),ref="Females")
 ```
 
 ### Coefficient Interpretation
+
 ```{r}
 ht_yc_fit_1 <- linear_reg() %>%
   set_engine("lm") %>%
@@ -395,19 +363,19 @@ ht_yc_fit_1 <- linear_reg() %>%
 tidy(ht_yc_fit_1)
 ```
 
-##### Year:
-The coefficient for Year is extremely small, indicating that time has minimal or no linear effect on crude mortality rate. This aligns with the visual scatter plot showing stable mortality levels across the years.
+```{r}
+coef_summary <- tribble(
+  ~Variable, ~Interpretation,
+  "Year", "Extremely small coefficient — time has minimal or no linear effect on crude mortality rate.",
+  "AgeGroup", "The 75+ age group has the largest coefficient, making age the strongest predictor of crude mortality rate.",
+  "Sex", "Males have a positive and significant coefficient, showing higher mortality rates than females.",
+  "Diagnosis", "Coronary Heart Disease and Heart Attack have large coefficients, indicating strong contributions to mortality."
+)
 
-##### AgeGroup:
-The 75+ age group has the largest estimated coefficient, making it the strongest predictor of crude mortality rate. This reflects the well-known increased cardiovascular risk among older populations.
-
-##### Sex:
-The coefficient for males is positive and significant, showing that male groups have higher mortality rates than females. This confirms that gender is an important demographic factor.
-
-##### Diagnosis:
-Both Coronary Heart Disease and Heart Attack categories have noticeably large coefficient estimates.
-These diagnosis types are therefore also major contributors to increased mortality rate.
-
+coef_summary %>%
+  kable(format = "html", caption = "Interpretation of Model Coefficients") %>%
+  kable_styling(full_width = FALSE, position = "left")
+```
 
 #### Importance Ranking (from least to most influential):
 Year < Is Male < Is Heart Attack < Is Coronary Heart Disease < Is Age 75+
@@ -424,26 +392,24 @@ ggplot(ht_yc_fit_aug_1, mapping = aes(x = .fitted, y = .resid)) +
 
 ```
 
-
 The residual plot shows several important patterns:
 
 #### 1. Clustered residuals with a large empty gap
 
-Residuals concentrate on the left and right sides of the predicted scale, with very few observations between predicted values 100–200.
-This structure may caused by:
-Most groups have low crude mortality rates；Only specific groups (e.g., 75+ or certain diagnoses) have very high mortality.Hence,this creates natural gaps in the distribution, independent of the model
+Residuals cluster at low and high fitted values, with very few in the 100–200 range.
+This reflects the natural separation between low-risk groups (younger ages, heart failure) and high-risk groups (75+, CHD).
 
 #### 2. Fan-shaped pattern 
 
-The residuals spread out more widely as the predicted value increases, forming a fan shape.
+Residuals spread out more at higher fitted values.
 
-Possible reasons include:
-- Missing important predictors (e.g.socioeconomic factors,disease behavior risk)
-- Non-linear relationships that the linear model cannot capture
-- The limitations of simple transformations
-    - Even after trying log(CrudeRate + 1), the distribution did not improve
+This may be due to:
+- Missing behavioural or socioeconomic predictors
+- Non-linear relationships
+- Limitations of linear modelling
 
-This suggests that the linearity assumption may not fully hold.
+Even log-transforming crude rate did not resolve these issues.
+
 ```{r results = "hide"}
 ht_yc_fit_2 <- linear_reg() %>%
   set_engine("lm") %>%
@@ -462,9 +428,8 @@ ggplot(ht_yc_fit_aug_2, mapping = aes(x = .fitted, y = .resid)) +
 
 ### Adjusted R²
 
-The adjusted R² value of this model indicates that:
-The linear regression model does not fit the data very well.
-It explains only a modest proportion of the variation in crude mortality rate.
+The adjusted R² shows that the linear model explains only a modest portion of the variability in crude mortality. This reflects both the skewed data distribution and the limited number of available predictors.
+
 ```{r}
 glance(ht_yc_fit_1)$adj.r.squared
 ```
@@ -479,6 +444,7 @@ The scatter plot shows:
 - Mortality rates remain stable across years
 
 These patterns confirm that Year is not a meaningful predictor in this dataset.
+
 ```{r results = "hide"}
 ht_yc_fit_3 <- linear_reg() %>%
   set_engine("lm") %>%
@@ -512,15 +478,9 @@ Although the linear regression model has limitations, it successfully identifies
 3. Diagnosis type (Coronary Heart Disease, Heart Attack)
 
 
+## Logistic regression model
 
-## logistic regression model
-
-We developed a binary classification model to predict cardiovascular mortality risk (high-risk vs. low-risk) for the Scottish population. The workflow and findings are summarized below.
-
- 
-- Outcome: The original crude mortality rate was expressed per 100 000 population. For easier interpretation we divided it by 100 to obtain a rate per 100 population, then dichotomised it at the median: values above the median were coded 1 (high risk) and values below the median 0 (low risk).  
-- Predictors: age, sex and diagnosis.  
-- Data split: the dataset was randomly divided into 80 % training and 20 % test sets.
+We built a binary classification model to predict whether an observation fell into a high- or low-risk cardiovascular mortality group. The crude mortality rate was scaled and then split at the median to form the two classes. Age, sex, and diagnosis were used as predictors, and the data was split into an 80% training set and a 20% test set for model evaluation.
 
 ```{r}
 CA <- Data %>% 
@@ -553,12 +513,11 @@ AUC_ROC <- CrudeRate_pred %>%
 AUC_ROC %>% autoplot()
 ```
 
- ROC curve  
-   - X-axis: false-positive rate (FPR), the proportion of true low-risk individuals incorrectly classified as high-risk.  
-   - Y-axis: true-positive rate (TPR), the proportion of true high-risk individuals correctly identified.
+ROC curve  
+ - X-axis: false-positive rate (FPR), the proportion of true low-risk individuals incorrectly classified as high-risk.  
+ - Y-axis: true-positive rate (TPR), the proportion of true high-risk individuals correctly identified.
 
-   The curve bows toward the upper-left corner, indicating good discriminatory performance.
-
+ The curve bows toward the upper-left corner, indicating good discriminatory performance.
 
 ```{r}
 cutoff_prob<-0.25
@@ -573,6 +532,7 @@ CrudeRate_pred %>%
 ```
 - Sensitivity = 30 / ( 30 + 20 ) ≈ 0.60
 - Specificity = 534 / ( 534 + 32 ) ≈ 0.943 
+
 ```{r}
 cutoff_prob<-0.5
 CrudeRate_pred %>%
@@ -586,6 +546,7 @@ CrudeRate_pred %>%
 ```
 - Sensitivity = 24 / ( 24 + 26 ) ≈ 0.48
 - Specificity = 553 / ( 553 + 26 ) ≈ 0.977  
+
 ```{r}
 cutoff_prob<-0.75
 CrudeRate_pred %>%
@@ -600,18 +561,9 @@ CrudeRate_pred %>%
 - Sensitivity = 9 / ( 9 + 41 ) ≈ 0.18
 - Specificity = NA
 
-  Among the candidate thresholds {0.25, 0.50, 0.75}, comparing 0.25 with 0.50 shows that raising the cut-off from 0.25 to 0.50 reduces sensitivity by 12 percentage points (from 0.60 to 0.48) while improving specificity by 3.4 percentage points (from 0.943 to 0.977).
-  
-  Since the priority is not to miss any high-risk individuals, we retain 0.25 as the preferred cut-off.
+The ROC curve shows strong model performance, with the curve bending toward the upper-left corner. We tested thresholds of 0.25, 0.50, and 0.75. Increasing the cut-off from 0.25 to 0.50 reduced sensitivity (0.60 -> 0.48) but only slightly improved specificity (0.943 -> 0.977).
 
-  At this threshold the model achieves:
-  Sensitivity = 0.60
-  Specificity = 0.943
-  
-  Although this choice accepts a slightly higher false-positive rate, it captures 60 % of true high-risk cases, compared with only 48 % at the more conservative threshold. 
-  
-  Future work will explore ways to raise sensitivity further without materially sacrificing specificity.
-
+Because detecting high-risk cases is the priority, we selected 0.25 as the preferred threshold. At this level, the model identifies 60% of high-risk observations while maintaining high specificity (0.943). Although this increases false positives slightly, it avoids missing many genuinely high-risk individuals. Future work could aim to improve sensitivity without losing specificity.
 
 
 ```{r}
@@ -622,41 +574,37 @@ CrudeRate_pred %>%
     event_level = "second"
   )
 ```
+
 The area under the ROC curve (AUC) is 0.842. A higher AUC indicates better performance, so this value confirms that the model is of good quality.
 
-Overall, using only age, sex and diagnosis, the model provides a promising initial screen for individuals at elevated risk of cardiovascular death and is ready for further development and prospective evaluation.
+Overall, the logistic model performs well despite using only three predictors, suggesting that even minimal information can meaningfully classify cardiovascular risk.
 
-## Limitations
-Insufficient explanatory variables:  
-The data lacks important factors such as health behaviors, lifestyle, and economic conditions,which makes the model unable to properly explain the differences in mortality rate.
+### Limitations
 
-The threshold for risk classification may affect results:  
-Different thresholds may produce different conclusions.
+Insufficient explanatory variables:
+The dataset lacks key factors such as lifestyle, health behaviours, and socioeconomic conditions, limiting the model’s ability to fully explain differences in mortality rates.
 
-Structural gaps in the data itself:   
-The distribution between high-mortality and low-mortality groups is very unbalanced,causing clustering patterns in the residual plot
+Threshold sensitivity:
+Different probability cut-offs can change the model’s classification results, affecting sensitivity and specificity.
 
-## Future Improvements
+Imbalanced data structure:
+High- and low-mortality groups are unevenly distributed, leading to clustering patterns in the residuals and reducing model stability.
+
+### Future Improvements
 
 Data selection:
--Add more explanatory variables (such as regional economic level, disease behavior risk, hospital resources)
--Expand the sample range (e.g.include longer time span)
-Data processing:
-linear regression model--Try more complex transformations
--Logistic regression model--Optimize the high/low risk classification method (e.g.quartile)
--Control the influence of external events (e.g., stratify by COVID years before analysis)
+- Include additional variables (e.g., socioeconomic factors, risk behaviours, healthcare access).
+- Expand the dataset, such as using a longer time span.
 
+Data processing:
+- Test more flexible transformations for the linear model.
+- Improve the high/low risk classification method in the logistic model (e.g., use quartiles).
+- Account for external factors like COVID-19 by analysing affected years separately.
 
 
 ## Conclusion
 
-
-
-
-
-
-
-
+This project shows that age (especially 75+), sex, and diagnosis type are the most influential factors in heart disease mortality in Scotland. Geography and year contribute very little explanatory power. The linear model highlighted these relationships, while the logistic model achieved strong predictive accuracy (AUC = 0.842). Although the dataset lacks behavioural and socioeconomic variables, the findings provide a solid foundation for understanding population-level risk and highlight opportunities for improved modelling in future research.
 
 
 ## References
